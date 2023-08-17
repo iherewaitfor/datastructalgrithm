@@ -1,5 +1,5 @@
 # 链表
-## 反转链表
+## 206反转链表
 力扣206[https://leetcode.cn/problems/reverse-linked-list/](https://leetcode.cn/problems/reverse-linked-list/)
 
 原题
@@ -34,3 +34,11 @@ public:
     }
 };
 ```
+## 25. K个一组翻转链表
+K个一组翻转链表。力扣25。
+
+[https://leetcode.cn/problems/reverse-nodes-in-k-group](https://leetcode.cn/problems/reverse-nodes-in-k-group)
+
+```
+```
+
