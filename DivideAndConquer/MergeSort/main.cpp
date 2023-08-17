@@ -8,9 +8,12 @@ public:
         if (L >= R) {
             return;
         }
+        //divide 分解
         int mid = (L+R)/2;
+        //conquer 解决
         mergeSort(arr, L, mid);
         mergeSort(arr, mid + 1, R);
+        //merge 合并
         merge(arr, L, mid, R);
     }
 
