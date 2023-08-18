@@ -4,7 +4,7 @@
 using namespace std;
 class FindMaxSubarray {
 public:
-    static vector<int> findMaxSubarray(vector<int>& arr, int low, int high) {
+    vector<int> findMaxSubarray(vector<int>& arr, int low, int high) {
         //递归结束条件
         if (high == low) {
             return { low, high, arr[low] };
@@ -31,8 +31,7 @@ public:
             return crossIndexs;
         }
     }
-    
-    static vector<int> findMaxCrossingSubarray(vector<int>& arr, int low, int mid, int high) {
+    vector<int> findMaxCrossingSubarray(vector<int>& arr, int low, int mid, int high) {
         //一定包含mid和mid+1的情况
         int leftSum = INT_MIN;
         int sum = 0;
@@ -57,13 +56,31 @@ public:
         return { maxLeft, maxRight, leftSum + rightSum };
 
     }
+    //leecode 121
+    //https://leetcode.cn/problems/best-time-to-buy-and-sell-stock/
+    int maxProfit(vector<int>& prices) {
+        if (prices.size() <= 1) {
+            return 0;
+        }
+        vector<int> arr(prices.size() - 1);
+        for (int i = 1; i < prices.size() - 1; i++) {
+            arr[i - 1] = prices[i] - prices[i - 1];
+        }
+        vector<int> results = findMaxSubarray(arr, 0, arr.size() - 1);
+        if (results[2] <= 0) {
+            return 0;
+        }
+        return results[2];
+    }
 };
+
 int main()
 {
     vector<int> nums = { 13, -3, -25, 20, -3, -16, -23,18, 20, -7, 12, -5, -22, 15, -4,7 }; // result:{7, 10, 43}
     //vector<int> nums = { 13 };
     //vector<int> nums = { -13 };
-    vector<int> resuls = FindMaxSubarray::findMaxSubarray(nums, 0, nums.size() - 1);
+    FindMaxSubarray maxSubarray;
+    vector<int> resuls = maxSubarray.findMaxSubarray(nums, 0, nums.size() - 1);
     for (int i = 0; i < nums.size(); i++) {
         cout << nums[i] << " ";
     }
@@ -71,5 +88,14 @@ int main()
     for (int i = 0; i < resuls.size(); i++) {
         cout << resuls[i] << " ";
     }
+
+    //test for 
+    //https://leetcode.cn/problems/best-time-to-buy-and-sell-stock/
+    cout << endl;
+    vector<int> num2s = { 7,1,5,3,6,4 };
+    FindMaxSubarray maxSubarray2;
+    int r = maxSubarray2.maxProfit(num2s);
+    cout << r;
+
     return 0;
 }
