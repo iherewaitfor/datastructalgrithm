@@ -6,8 +6,8 @@ class ExtendButtomUpCutRod {
 public:
     void cut(vector<int>& arr, int n, vector<int> &result,vector<int> &scut ) {
         //申请空间存在子问题的解，
-        vector<int> r(n+1);
-        vector<int> s(n+1); // the first cut index  of the max.
+        vector<int> r(n+1); //[0-n]
+        vector<int> s(n+1); //[0-n], the first cut index  of the max.
         r[0] = 0; //最基础的子问题解。
         for (int j = 1; j <= n; j++) {
             //求解各个子问题
@@ -42,6 +42,6 @@ int main()
 {
     vector<int> nums = {0,1,5,8,9,10,17,17,20,24,30 };
     ExtendButtomUpCutRod cutRod;
-    cutRod.printCutRod(nums, 8);
+    cutRod.printCutRod(nums, 8);//1-10
     return 0;
 }
