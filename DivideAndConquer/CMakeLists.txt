@@ -11,3 +11,4 @@ set(TARGET_OUT_DIR "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 
 add_subdirectory(MergeSort)
 add_subdirectory(QuickSort)
+add_subdirectory(FindMaxSubarray)
