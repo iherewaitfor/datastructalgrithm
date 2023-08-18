@@ -6,7 +6,7 @@ public:
     void sort(vector<int>& arr) {
         buildMaxHeap(arr);
         for (int i = arr.size()-1; i > 0; i--) {
-            swap(arr, 0, i); // 从根结点，放到堆最后
+            swap(arr, 0, i); // 把根结点，放到堆最后。
             maxHeapify(arr, 0, i); // the new heap size is i;
         }
     }
