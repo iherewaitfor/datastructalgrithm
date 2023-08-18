@@ -10,6 +10,7 @@
   - [归并排序](#归并排序)
   - [快速排序](#快速排序)
 - [动态规划](#动态规划)
+  - [钢条切割](#钢条切割)
 
 # datastructalgrithm
 datastruct  and  algrithm
@@ -27,3 +28,5 @@ datastruct  and  algrithm
 ## 归并排序
 ## 快速排序
 # 动态规划
+
+## 钢条切割
