@@ -10,7 +10,7 @@ public:
         vector<int> s(n+1); //[0-n], the first cut index  of the max.
         r[0] = 0; //最基础的子问题解。
         for (int j = 1; j <= n; j++) {
-            //求解各个子问题
+            //自底自上求解各个子问题的解。
             int q = INT_MIN;
             for (int i = 1; i <= j; i++) {
                 // max(pn,R1+Rn-1, R2+Rn-2... Rn-1+R1)
@@ -22,6 +22,7 @@ public:
             }
             r[j] = q;
         }
+        //返回结果。
         result.resize(n+1);
         scut.resize(n+1);
         std::copy(r.begin(), r.end(), result.begin());
