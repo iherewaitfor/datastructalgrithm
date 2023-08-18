@@ -7,5 +7,7 @@ datastruct  and  algrithm
 ## 二叉树
 # 排序
 # 分治
+## 归并排序
+## 快速排序
 # 动态规划
 
