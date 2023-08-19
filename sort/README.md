@@ -7,7 +7,7 @@
 # 排序
 # 归并排序
 # 快速排序
-
+[DivideAndConquer/README.md#快速排序](https://github.com/iherewaitfor/datastructalgrithm/blob/main/DivideAndConquer/README.md#%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F)
 # 堆排序
 [sort/HeapSort](https://github.com/iherewaitfor/datastructalgrithm/tree/main/sort/HeapSort)
 # 计算排序
