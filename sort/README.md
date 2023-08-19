@@ -16,26 +16,20 @@
 [https://leetcode.cn/problems/sort-an-array/](https://leetcode.cn/problems/sort-an-array/)
 
 ```C++
-    void countSort(vector<int> & nums){
+    void couterSort(vector<int>& nums){
         const int MAP_SIZE = 100010;
         const int OFFSET = 50000;
-        vector<int> mapArr(MAP_SIZE);
-        for(int i = 0; i < mapArr.size(); i++){
-            mapArr[i] = 0;
-        }
+        vector<int> countMap(MAP_SIZE,0);
         for(int i = 0; i < nums.size(); i++){
             nums[i] += OFFSET;
-            mapArr[nums[i]] += 1;
+            countMap[nums[i]]++;
         }
         int index = 0;
-        for(int i = 0; i < mapArr.size(); i++){
-            while(mapArr[i] > 0){
-                nums[index++] = i;
-                mapArr[i]--;
+        for(int i = 0; i < countMap.size(); i++){
+            while(countMap[i] > 0){
+                nums[index++] = i - OFFSET;
+                countMap[i]--;
             }
-        }
-        for(int i = 0; i < nums.size(); i++){
-            nums[i] -= OFFSET;
         }
     }
 ```
