@@ -33,3 +33,38 @@
         }
     }
 ```
+
+自适应mapsize，有可能能省一点内存。
+```C++
+    void countSort(vector<int> & nums){
+        if(nums.size() <=1){
+            return;
+        }
+        int maxNum = nums[0];
+        int minNum = nums[0];
+        for(int i = 0; i < nums.size(); i++){
+            if(maxNum < nums[i]){
+                maxNum = nums[i];
+            }
+            if(minNum > nums[i]){
+                minNum = nums[i];
+            }
+        }
+        int mapsize = maxNum - minNum + 1;
+        // num - offset = index  of countMap. start from 0.
+        // minMum - offset = 0
+        int offset  = minNum; 
+
+        vector<int> countMap(mapsize,0);
+        for(int i = 0; i < nums.size(); i++){
+            nums[i] -= offset;
+            countMap[nums[i]] += 1;
+        }
+        for(int i = 0,index = 0; i < countMap.size(); i++){
+            while(countMap[i] > 0){
+                nums[index++] = i + offset;
+                countMap[i]--;
+            }
+        }
+    }
+```
