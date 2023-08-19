@@ -73,6 +73,7 @@
         quickSort(nums, rq, R);
     }
     int partion(vector<int>& nums, int L, int R){
+        srand(time(NULL));
         int xIndex = (rand() % (R-L+1))+ L; //随机
         swap(nums, xIndex, R);
         int x = nums[R];
