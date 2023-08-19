@@ -54,11 +54,6 @@
 - 优化重复元素
   - 优化大部分是重复元素的情况。
 
-随机产生[L,R]范围内的整数。
-```C++
-(rand() % (R-L+1))+ L
-```
-
 ```C++
     void quickSort(vector<int>& nums, int L, int R){
         if(L >= R){
@@ -97,6 +92,13 @@
         nums[j] = temp;
     }
 ```
+
+rand随机产生[L,R]范围内的整数。
+```C++
+(rand() % (R-L+1))+ L
+```
+rand 请参考[https://cplusplus.com/reference/cstdlib/rand/](https://cplusplus.com/reference/cstdlib/rand/)
+
 # 查找最大子数组
 - 股票买卖
 
