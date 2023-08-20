@@ -32,6 +32,36 @@ public:
         }
         return dp[maxIndex];
     }
+
+    //求子数组和及下标
+    vector<int> maxSubarrayWidthIndex(vector<int>& nums, int L, int R) {
+        if(L>R){
+            return { 0,0, 0}; 
+        }
+        int size = R - L + 1;
+        //0: left index
+        //1: right index
+        //2: sum
+        vector<vector<int>> dp(size, { 0,0,0 });
+        int maxIndex = 0;
+        dp[0] = { L,L,nums[L] };
+        for (int i = 1,j = L+i; i < size; ++i,j++) {
+            if (dp[i - 1][2] + nums[j] > nums[j]) {
+                dp[i][0] = dp[i - 1][0];
+                dp[i][1] = j;
+                dp[i][2] = dp[i - 1][2] + nums[j];
+            }
+            else {
+                dp[i][0] = j;
+                dp[i][1] = j;
+                dp[i][2] = nums[j];
+            }
+            if (dp[i][2] > dp[maxIndex][2]) {
+                maxIndex = i;
+            }
+        }
+        return dp[maxIndex];
+    }
     //leecode 53. 最大子数组和
     //https://leetcode.cn/problems/maximum-subarray/
 

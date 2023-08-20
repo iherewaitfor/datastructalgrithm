@@ -2,6 +2,7 @@
 - [钢条切割 CutRod](#钢条切割-cutrod)
 - [最大连续子数组之和](#最大连续子数组之和)
 - [最大连续子数组](#最大连续子数组)
+- [买卖股票的最佳时期3](#买卖股票的最佳时期3)
 
 # DynamicProgramming 动态规划
 动态归划，与分治策略类似
@@ -137,4 +138,84 @@ nums[n];
 ```
 
 # 最大连续子数组
+
+返回和以及子数组下标
+
+# 买卖股票的最佳时期3
+
+
+未优化版本
+```C++
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        if(prices.size() <= 1){
+            return 0;
+        }
+        vector<int> arr(prices.size()-1);
+        for(int i = 1; i <= prices.size() -1; i++){
+            arr[i-1] = prices[i] - prices[i -1 ];
+        }
+        int r = max2SubArraySum(arr);
+        return r > 0 ? r : 0;
+    }
+    int max2SubArraySum(vector<int>&nums){
+        if(nums.size() == 0){
+            return 0;
+        }
+        //至多两笔交易，第一笔在i点卖出。
+        vector<int> dp2(nums.size(), {0});
+        //求左右 子数组最大值之和
+        dp2[0] = maxSum(nums[0], maxSubarray(nums, 1, nums.size() - 1)[2]);
+        int maxValue = dp2[0];
+        for(int i = 1; i < nums.size(); i++){
+            dp2[i] = maxSum(maxSubarray(nums,0, i)[2], maxSubarray(nums,i+1, nums.size()-1)[2]);
+            maxValue = dp2[i] > maxValue ? dp2[i] : maxValue;
+        }
+        return maxValue;
+    }
+    int maxSum(int a, int b){
+        if( a > 0 ){
+            return  b > 0 ? (a+b) : a;
+            
+        } else {
+            return b > 0 ? b : 0;
+        }
+    }
+
+    //求子数组和及下标
+    vector<int> maxSubarray(vector<int>& nums, int L, int R) {
+        if(L>R){
+            return { 0,0, 0}; 
+        }
+        int size = R - L + 1;
+        //0: left index
+        //1: right index
+        //2: sum
+        vector<vector<int>> dp(size, { 0,0,0 });
+        int maxIndex = 0;
+        dp[0] = { L,L,nums[L] };
+        for (int i = 1,j = L+i; i < size; ++i,j++) {
+            if (dp[i - 1][2] + nums[j] > nums[j]) {
+                dp[i][0] = dp[i - 1][0];
+                dp[i][1] = j;
+                dp[i][2] = dp[i - 1][2] + nums[j];
+            }
+            else {
+                dp[i][0] = j;
+                dp[i][1] = j;
+                dp[i][2] = nums[j];
+            }
+            if (dp[i][2] > dp[maxIndex][2]) {
+                maxIndex = i;
+            }
+        }
+        return dp[maxIndex];
+    }
+};
+```
+
+
+
+
 
