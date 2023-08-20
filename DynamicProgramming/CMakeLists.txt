@@ -10,3 +10,5 @@ project (DynamicProgramming)
 set(TARGET_OUT_DIR "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 
 add_subdirectory(CutRod)
+add_subdirectory(FindMaxSubarray)
+
