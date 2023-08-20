@@ -89,6 +89,22 @@ public:
     int max(int a, int b) {
         return a > b ? a : b;
     }
+
+    //只求和不求下标， 带左右索引
+    int maxSubarraySumWidthLR(vector<int>& nums, int L, int R) {
+        if (L > R) {
+            return 0;
+        }
+        int size = R - L + 1;
+        vector<int> dp(size);
+        dp[0] = nums[L];
+        int maxValue = dp[0];
+        for (int i = 1, j = i+L; i < size; ++i, j++) {
+            dp[i] = max(dp[i - 1] + nums[j], nums[j]);
+            maxValue = max(maxValue, dp[i]);
+        }
+        return maxValue;
+    }
     //leecode 121
     //https://leetcode.cn/problems/best-time-to-buy-and-sell-stock/
     int maxProfit(vector<int>& prices) {
