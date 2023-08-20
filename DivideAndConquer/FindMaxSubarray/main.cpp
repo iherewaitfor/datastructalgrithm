@@ -63,7 +63,7 @@ public:
             return 0;
         }
         vector<int> arr(prices.size() - 1);
-        for (int i = 1; i < prices.size() - 1; i++) {
+        for (int i = 1; i < prices.size(); i++) {
             arr[i - 1] = prices[i] - prices[i - 1];
         }
         vector<int> results = findMaxSubarray(arr, 0, arr.size() - 1);

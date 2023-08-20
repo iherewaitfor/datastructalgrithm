@@ -6,6 +6,7 @@
   - [归并](#归并)
   - [快速](#快速)
   - [堆排序](#堆排序)
+  - [计数](#计数)
 - [分治](#分治)
   - [归并排序](#归并排序)
   - [快速排序](#快速排序)
@@ -24,9 +25,10 @@ datastruct  and  algrithm
 ## 归并
 ## 快速
 ## 堆排序
+## 计数
 # 分治
 ## 归并排序
 ## 快速排序
 # 动态规划
-
+[DynamicProgramming/README.md](https://github.com/iherewaitfor/datastructalgrithm/blob/main/DynamicProgramming/README.md)
 ## 钢条切割
