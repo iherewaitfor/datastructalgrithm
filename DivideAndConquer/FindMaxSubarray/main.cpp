@@ -72,6 +72,38 @@ public:
         }
         return results[2];
     }
+
+
+    
+    vector<int> maxSubarraySumbyDP(vector<int>&nums) {
+        if (nums.size() == 0) {
+            return { 0,0,0 };
+        }
+        //0: left index
+        //1: right index
+        //2: sum
+        vector<vector<int>> dp(nums.size(), { 0,0,0 });
+        int maxIndex = 0;
+        dp[0] = { 0,0,nums[0] };
+        for (int i = 1; i < nums.size(); ++i) {
+            if (dp[i - 1][2] + nums[i] > nums[i]) {
+                dp[i][0] = dp[i - 1][0];
+                dp[i][1] = i;
+                dp[i][2] = dp[i - 1][2] + nums[i];
+            }
+            else {
+                dp[i][0] = i;
+                dp[i][1] = i;
+                dp[i][2] = nums[i];
+            }
+            int leftIndex = dp[i - 1][0];//left
+            
+            if (dp[i][2] > dp[maxIndex][2]) {
+                maxIndex = i;
+            }
+        }
+        return dp[maxIndex];
+    }
 };
 
 int main()
@@ -85,9 +117,17 @@ int main()
         cout << nums[i] << " ";
     }
     cout << endl;
+    cout << "maxSubarray by Divide And Conquer " << endl;
     for (int i = 0; i < resuls.size(); i++) {
         cout << resuls[i] << " ";
     }
+    cout << endl;
+    vector<int> dpResults = maxSubarray.maxSubarraySumbyDP(nums);
+    cout << "maxSubarray by Dynamic Programming " << endl;
+    for (int i = 0; i < dpResults.size(); i++) {
+        cout << dpResults[i] << " ";
+    }
+
 
     //test for 
     //https://leetcode.cn/problems/best-time-to-buy-and-sell-stock/
