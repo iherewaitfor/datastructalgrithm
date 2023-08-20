@@ -1,5 +1,6 @@
 - [DynamicProgramming 动态规划](#dynamicprogramming-动态规划)
 - [钢条切割 CutRod](#钢条切割-cutrod)
+- [最大连续子数组之和](#最大连续子数组之和)
 - [最大连续子数组](#最大连续子数组)
 
 # DynamicProgramming 动态规划
@@ -77,7 +78,8 @@
 - 使用额外空间存储子问题的解，避免重复求解子问题。
 - 使用子问题解组合成原问题解。
 
-# 最大连续子数组
+# 最大连续子数组之和
+
 - 把原问题划分成独立的子问题
   - 以第i个元素结尾的子数组的最大子数组和为dp[i]
     - 与第i子元素相连   
@@ -91,6 +93,8 @@
     - dp[i] = max(dp[i - 1] + nums[i], nums[i]);
 - 使用子问题解组合成原问题解。
   - max(dp[0], dp[1], dp[2], ... , dp[n-2],dp[n-1]);
+
+[https://leetcode.cn/problems/maximum-subarray/](https://leetcode.cn/problems/maximum-subarray/)
 
 nums[n];
 状态步骤
@@ -112,7 +116,6 @@ nums[n];
   - 组合子问题的解，求解原问题的解
   - result = max(dp[0], dp[1], d[2], ..., dp[n-2], d[n-1]);
 
-最大连续子数组之和
 
 ```C++
     int maxSubarraySum(vector<int>& nums){
@@ -132,3 +135,6 @@ nums[n];
         return a > b ? a : b;
     }
 ```
+
+# 最大连续子数组
+
