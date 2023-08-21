@@ -243,7 +243,8 @@ leecode 198
 
 leecode 72 [https://leetcode.cn/problems/edit-distance](https://leetcode.cn/problems/edit-distance)
 
-找最小路径和。
+生成路径
+
 ```C++
     int minDistance(string word1, string word2) {
         int m = word1.length();
@@ -253,13 +254,13 @@ leecode 72 [https://leetcode.cn/problems/edit-distance](https://leetcode.cn/prob
         //word2的前j子串 所需的最小步数
         vector<vector<int>> dp(m+1, vector<int>(n+1));
 
-        //dp[i-1][j-1]  
-        //dp[i-1][j]   从word1插入一个字符dp[i][j]
-        //dp[i][j-1]   从word2插入一个字条dp[i][j]
+        //dp[i-1][j-1]    
+        //dp[i-1][j]      
+        //dp[i][j-1]      
         
         // 可以从以上3个状态，转换到dp[i][j].
         //对应二维图，dp[i][j]的 左上方、上方、左方三个格子
-        //可以转换为，二维图的路径，怎么走代价最小。
+        //可以转换为，二维图的路径生成：从左上角到右下角。
 
         //第一行
         for(int j = 1; j <= n; j++){
@@ -273,6 +274,8 @@ leecode 72 [https://leetcode.cn/problems/edit-distance](https://leetcode.cn/prob
         for(int i = 1; i <= m; i++){
             for(int j = 1; j <= n; j++){
                 if(word1[i-1] == word2[j-1]){
+                    //即word1的第i字符，与word2的第j字符相等。
+                    //当该条件成立时，可以无代价从dp[i-1][j-1]跳到dp[i][j];
                     dp[i][j] = dp[i-1][j-1];
                 } else {
                     dp[i][j] = min(min(dp[i-1][j-1], dp[i][j-1]),
