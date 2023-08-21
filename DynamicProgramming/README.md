@@ -3,6 +3,7 @@
 - [最大连续子数组之和](#最大连续子数组之和)
 - [最大连续子数组](#最大连续子数组)
 - [买卖股票的最佳时期3](#买卖股票的最佳时期3)
+- [打家劫舍](#打家劫舍)
 
 # DynamicProgramming 动态规划
 动态归划，与分治策略类似
@@ -215,6 +216,26 @@ public:
 };
 ```
 
+# 打家劫舍
+leecode 198
+
+[https://leetcode.cn/problems/house-robber](https://leetcode.cn/problems/house-robber)
+
+```C++
+    int rob(vector<int>& nums) {
+        int n = nums.size();
+        if(n == 1){
+            return nums[0];
+        }
+        vector<int> dp(n);
+        dp[0] = nums[0];
+        dp[1] = max(nums[0], nums[1]);
+        for(int i = 2; i < n; i++){
+            dp[i] = max(dp[i-1], dp[i-2] + nums[i]);
+        }
+        return dp[n- 1];
+    }
+```
 
 
 
