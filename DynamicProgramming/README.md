@@ -6,6 +6,7 @@
 - [打家劫舍](#打家劫舍)
 - [编辑距离 leecode 72](#编辑距离-leecode-72)
 - [不同的子序列 leecode 115](#不同的子序列-leecode-115)
+- [leecode 120 三角形最小路径和](#leecode-120-三角形最小路径和)
 
 # DynamicProgramming 动态规划
 动态归划，与分治策略类似
@@ -347,5 +348,40 @@ leecode 115 不同的子序列
             }
         }
         return dp[m][n];
+    }
+```
+
+# leecode 120 三角形最小路径和
+
+```C++
+    int minimumTotal(vector<vector<int>>& triangle) {
+        vector<vector<int>> dp(triangle);
+        int m = triangle.size();//行数
+        //dp[0][0]已初始化
+        for(int i = 1; i < m; i++){
+            int n = triangle[i].size();
+            for(int j = 0; j < n; j++){
+                if(j == 0){
+                    //三角形的边，只有一条路径到达。
+                    dp[i][j] += dp[i-1][j];
+                    continue;
+                }
+                if(j == n-1){
+                    //三角形的边，只有一条路径到达。
+                    dp[i][j] += dp[i-1][j-1];//上一行比这一行少一列
+                    continue;
+                }
+                dp[i][j] += min(dp[i-1][j-1], dp[i-1][j]);
+            }
+        }
+        int n = triangle[m-1].size();
+        int minVal = dp[m-1][0];
+        for(int j = 0; j < n; j ++){
+            minVal = min(minVal, dp[m-1][j]);
+        }
+        return minVal;
+    }
+    int min(int a, int b){
+        return a < b ? a : b;
     }
 ```
