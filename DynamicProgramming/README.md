@@ -5,6 +5,7 @@
 - [买卖股票的最佳时期3](#买卖股票的最佳时期3)
 - [打家劫舍](#打家劫舍)
 - [编辑距离 leecode 72](#编辑距离-leecode-72)
+- [不同的子序列 leecode 115](#不同的子序列-leecode-115)
 
 # DynamicProgramming 动态规划
 动态归划，与分治策略类似
@@ -303,4 +304,48 @@ leecode 64. 最小路径和的逻辑是很类似的。
 
 
 
+# 不同的子序列 leecode 115
+leecode 115 不同的子序列
+[https://leetcode.cn/problems/distinct-subsequences](https://leetcode.cn/problems/distinct-subsequences)
 
+- 设计状态 
+    - dp[i][j]表示，s字符串的前i子串包含 t的前j子串的个数。
+    - dp[i][j]表示s的前i子串，长度为i，从s[0]-s[i-1]。  t[0]-t[j-1]。
+    - i = 0表示空串
+- 状态转移方程
+  - s[i-1] = s[j-1]
+    - 左上方和上方格式之和
+    - dp[i][j] = dp[i-1][j-1] + dp[i-1][j]
+  - s[i-1] != s[j-1]
+    - 上方格式
+    - dp[i][j] = dp[i-1][j]
+- 初始条件
+  - 注意边界条件dp[i][0]，全部为1。表示所有的子串包含一个空串。
+- 执行状态转移
+  - 在此处表现为，从生成二维图。从上到下，从左到右依次执行状态转移方程
+  - 自底向上。从初始条件到最终解。
+- 返回最终解
+  - 此题解就是dp[m][n]
+
+[https://leetcode.cn/problems/distinct-subsequences](https://leetcode.cn/problems/distinct-subsequences)
+
+```C++
+    int numDistinct(string s, string t) {
+        int m = s.length();
+        int n = t.length();
+        vector<vector<uint64_t>> dp(m+1, vector<uint64_t>(n+1,0));
+        for(int i = 0 ; i <= m; i++){
+            dp[i][0] = 1;
+        }
+        for(int i = 1; i <= m; i++){
+            for(int j = 1; j <= i && j <=n; j++){
+                if(s[i-1] == t[j-1]){
+                    dp[i][j] =  dp[i-1][j-1] + dp[i-1][j];
+                } else {
+                    dp[i][j] = dp[i-1][j];
+                }
+            }
+        }
+        return dp[m][n];
+    }
+```
