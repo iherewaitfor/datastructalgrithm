@@ -8,6 +8,7 @@
 - [不同的子序列 leecode 115](#不同的子序列-leecode-115)
 - [leecode 120 三角形最小路径和](#leecode-120-三角形最小路径和)
 - [leecode 931. 下降路径最小和](#leecode-931-下降路径最小和)
+- [leecode 221. 最大正方形](#leecode-221-最大正方形)
 
 # DynamicProgramming 动态规划
 动态归划，与分治策略类似
@@ -389,6 +390,8 @@ leecode 115 不同的子序列
 
 # leecode 931. 下降路径最小和
 
+[https://leetcode.cn/problems/minimum-falling-path-sum](https://leetcode.cn/problems/minimum-falling-path-sum)
+
 ```C++
     int minFallingPathSum(vector<vector<int>>& matrix) {
         vector<vector<int>> dp(matrix);
@@ -419,5 +422,35 @@ leecode 115 不同的子序列
     }
     int min(int a, int b){
         return a < b ? a : b;
+    }
+```
+
+# leecode 221. 最大正方形
+
+[https://leetcode.cn/problems/maximal-square](https://leetcode.cn/problems/maximal-square)
+
+```C++
+    int maximalSquare(vector<vector<char>>& matrix) {
+        if (matrix.size() == 0 || matrix[0].size() == 0) {
+            return 0;
+        }
+        int m = matrix.size();
+        int n = matrix[0].size();
+        vector<vector<int>> dp(m,vector<int>(n,0));
+        int maxN = 0;
+        for(int i = 0; i < m; i++){
+            for(int j = 0; j < n; j++){
+                if(matrix[i][j] == '1'){
+                    if(i == 0 || j == 0){
+                        dp[i][j] = 1;
+                    } else {
+                        dp[i][j] = min(dp[i-1][j], dp[i][j-1]);
+                        dp[i][j] = min(dp[i][j], dp[i-1][j-1]) + 1; 
+                    }
+                    maxN = max(maxN, dp[i][j]);
+                }
+            }
+        }
+        return maxN*maxN;
     }
 ```
