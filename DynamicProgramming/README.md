@@ -7,6 +7,7 @@
 - [编辑距离 leecode 72](#编辑距离-leecode-72)
 - [不同的子序列 leecode 115](#不同的子序列-leecode-115)
 - [leecode 120 三角形最小路径和](#leecode-120-三角形最小路径和)
+- [leecode 931. 下降路径最小和](#leecode-931-下降路径最小和)
 
 # DynamicProgramming 动态规划
 动态归划，与分治策略类似
@@ -377,6 +378,41 @@ leecode 115 不同的子序列
         int n = triangle[m-1].size();
         int minVal = dp[m-1][0];
         for(int j = 0; j < n; j ++){
+            minVal = min(minVal, dp[m-1][j]);
+        }
+        return minVal;
+    }
+    int min(int a, int b){
+        return a < b ? a : b;
+    }
+```
+
+# leecode 931. 下降路径最小和
+
+```C++
+    int minFallingPathSum(vector<vector<int>>& matrix) {
+        vector<vector<int>> dp(matrix);
+        int m = matrix.size();
+        int n = m;
+        //0行已初始
+        for(int i = 1; i < m; i++){
+            for(int j = 0; j < n; j++){
+                //正方形左边
+                if(j == 0){
+                    dp[i][j] += min(dp[i-1][j], dp[i-1][j+1]);
+                    continue;
+                }
+                //正方形右边
+                if(j == n - 1){
+                    dp[i][j] += min(dp[i-1][j-1], dp[i-1][j]);
+                    continue;
+                }
+                int minLast = min(dp[i-1][j-1], dp[i-1][j]);
+                dp[i][j] += min(minLast, dp[i-1][j+1]);
+            }
+        }
+        int minVal = dp[m-1][0];
+        for(int j = 1; j < n; j++){
             minVal = min(minVal, dp[m-1][j]);
         }
         return minVal;
