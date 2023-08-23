@@ -9,6 +9,7 @@
 - [leecode 120 三角形最小路径和](#leecode-120-三角形最小路径和)
 - [leecode 931. 下降路径最小和](#leecode-931-下降路径最小和)
 - [leecode 221. 最大正方形](#leecode-221-最大正方形)
+- [leecode 1027. 最长等差数列](#leecode-1027-最长等差数列)
 
 # DynamicProgramming 动态规划
 动态归划，与分治策略类似
@@ -452,5 +453,28 @@ leecode 115 不同的子序列
             }
         }
         return maxN*maxN;
+    }
+```
+
+# leecode 1027. 最长等差数列
+leecode 1027. 最长等差数列
+```C++
+   int longestArithSeqLength(vector<int>& nums) {
+        int m = nums.size();
+        //dp[i][d]
+        //表示以元素nums[i]为结尾的，等差为d的等差数列的长度。
+        //注意d需要做偏移，以符合下标规则。
+        vector<vector<int>> dp(m, vector<int>(1001,1));
+        int res = 0;
+        for(int i = 0; i < m; i++){
+            for(int j = 0; j < i; j++) {
+                //ofsset = 500
+                int temDiff = nums[i] - nums[j];
+                int diff = temDiff + 500;
+                dp[i][diff] = max(dp[i][diff], dp[j][diff] + 1);
+                res = max(res, dp[i][diff]);
+            }
+        }
+        return res;
     }
 ```
