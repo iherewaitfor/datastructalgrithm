@@ -2,6 +2,9 @@
 - [前序遍历](#前序遍历)
   - [递归遍历](#递归遍历)
   - [迭代 by Stack](#迭代-by-stack)
+- [中序遍历](#中序遍历)
+  - [递归](#递归)
+  - [迭代 byStack](#迭代-bystack)
 
 # 二叉树
 
@@ -46,6 +49,52 @@ struct TreeNode {
             while(pLeft){
                 res.push_back(pLeft->val);
                 treeStack.push(pLeft->right);//先进后出
+                pLeft = pLeft->left;
+            }
+        }
+    }
+```
+# 中序遍历
+## 递归
+```C++
+    void inOrder(TreeNode* root, vector<int> &res){
+        if(root == NULL){
+            return;
+        }
+        inOrder(root->left, res);
+        res.push_back(root->val);//中序
+        inOrder(root->right, res);
+    }
+```
+## 迭代 byStack
+```C++
+    void inOrderByStack(TreeNode* root, vector<int> &res){
+        stack<TreeNode*> tStack;
+        tStack.push(root); //入栈。先入后出。出栈时再输出。左根右
+        if(root){
+            TreeNode * pLeft = root->left;;
+            while(pLeft!=NULL){
+                tStack.push(pLeft);
+                pLeft = pLeft->left;
+            }
+        }
+        while(!tStack.empty()){
+            TreeNode* node = tStack.top();
+            tStack.pop();//出栈
+            if(node == NULL){
+                continue;
+            }
+            //只在出栈时输出。
+            res.push_back(node->val);
+            //右孩子入栈：先进后出
+            tStack.push(node->right);
+            //右孩子的所有左孩子入栈。
+            TreeNode * pLeft = NULL;
+            if(node->right){
+                pLeft = node->right->left;
+            }
+            while(pLeft != NULL){
+                tStack.push(pLeft);//先进后出。出来时输出
                 pLeft = pLeft->left;
             }
         }
