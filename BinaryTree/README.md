@@ -104,10 +104,66 @@ struct TreeNode {
     }
 ```
 # 后序遍历
+左右根
+
 ## 递归
+
+```C++
+    void postOrder(TreeNode* root, vector<int>&res){
+        if(root == NULL){
+            return;
+        }
+        postOrder(root->left, res);
+        postOrder(root->right, res);
+        res.push_back(root->val);
+    }
+```
+
 ## 迭代 byStack
 
-非优化版本。
+通过unordered_set记录已经访问过的结点，判断出栈逻辑。
+
+```C++
+    void postOrderByStackAndSet(TreeNode* root, vector<int>&res){
+        stack<TreeNode*> tStack;
+        if(!root){
+           return; 
+        }
+        //后序：左右根
+        tStack.push(root);//根
+        TreeNode * pLastvisi  = NULL; //上一个被访问的结点。
+        unordered_set<TreeNode*> visitedNodes; //记录已访问过的结点
+        while(!tStack.empty()){
+            TreeNode* node = tStack.top();
+            if(node==NULL){
+                tStack.pop();
+                pLastvisi = NULL;
+                continue;
+            }
+            //根结点在左右都被访问过,才能出栈
+            //左孩子已处理
+            if(node->left == NULL || visitedNodes.count(node->left)){
+                //右孩子已处理
+                if(node->right == NULL || visitedNodes.count(node->right)){
+                    tStack.pop();
+                    res.push_back(node->val);
+                    visitedNodes.insert(node);
+                    pLastvisi = node;
+                    continue;
+                } else {
+                    //处理左孩子。
+                    tStack.push(node->right);
+                }
+            } else {
+                //处理左孩子。
+                tStack.push(node->left);
+            }
+        }
+    }
+
+```
+
+非优化版本。通过穷举，判断左右孩子是否已被访问。
 
 ```C++
     void postOrderByStack(TreeNode* root, vector<int>&res){
