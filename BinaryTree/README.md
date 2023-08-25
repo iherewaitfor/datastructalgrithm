@@ -5,6 +5,9 @@
 - [中序遍历](#中序遍历)
   - [递归](#递归)
   - [迭代 byStack](#迭代-bystack)
+- [后序遍历](#后序遍历)
+  - [递归](#递归-1)
+  - [迭代 byStack](#迭代-bystack-1)
 
 # 二叉树
 
@@ -97,6 +100,77 @@ struct TreeNode {
                 tStack.push(pLeft);//先进后出。出来时输出
                 pLeft = pLeft->left;
             }
+        }
+    }
+```
+# 后序遍历
+## 递归
+## 迭代 byStack
+
+非优化版本。
+
+```C++
+    void postOrderByStack(TreeNode* root, vector<int>&res){
+        stack<TreeNode*> tStack;
+        if(!root){
+           return; 
+        }
+        //后序：左右根
+        tStack.push(root);//根
+        TreeNode * pLastvisi  = NULL; //上一个被访问的结点。
+        while(!tStack.empty()){
+            TreeNode* node = tStack.top();
+            if(node==NULL){
+                tStack.pop();
+                pLastvisi = NULL;
+                continue;
+            }
+            //根结点在左右都被访问过,才能出栈
+            //左右为空
+            if(node->left == NULL && node->right == NULL){
+                //出栈。
+                tStack.pop();
+                res.push_back(node->val);
+                pLastvisi = node;
+                continue;
+            }
+
+            if(node->left == NULL && node->right != NULL){
+                //右孩子访问就可以出栈，否则入栈右孩子。
+                //确认左孩子已访问
+                if(pLastvisi == node->right){
+                    tStack.pop();
+                    res.push_back(node->val);
+                    pLastvisi = node;
+                } else {
+                    tStack.push(node->right);
+                }
+                continue;
+            }
+
+            if(node->right == NULL && node->left != NULL){
+                if(pLastvisi == node->left){
+                    tStack.pop();
+                    res.push_back(node->val);
+                    pLastvisi = node;
+                } else {
+                    tStack.push(node->left);
+                }
+                continue;
+            }
+
+            if(node->right != NULL && node->left != NULL){
+                if(pLastvisi == node->right){
+                    tStack.pop();
+                    res.push_back(node->val);
+                    pLastvisi = node;
+                } else if(pLastvisi == node->left){
+                    tStack.push(node->right);
+                } else{
+                    tStack.push(node->left);
+                }
+                continue;
+            }        
         }
     }
 ```
