@@ -71,33 +71,31 @@ struct TreeNode {
 ```
 ## 迭代 byStack
 ```C++
-    void inOrderByStack(TreeNode* root, vector<int> &res){
+    void inorderByStack(TreeNode* root, vector<int> & res) {
         stack<TreeNode*> tStack;
-        tStack.push(root); //入栈。先入后出。出栈时再输出。左根右
+        tStack.push(root);
+        //根结点已在栈里。左孩子后入栈，（后进先出），先出栈先被访问。
+        TreeNode * pLeft = NULL;
         if(root){
-            TreeNode * pLeft = root->left;;
-            while(pLeft!=NULL){
+            pLeft = root->left;
+        }
+        while(pLeft){
                 tStack.push(pLeft);
                 pLeft = pLeft->left;
-            }
         }
         while(!tStack.empty()){
             TreeNode* node = tStack.top();
-            tStack.pop();//出栈
+            tStack.pop(); //出栈
             if(node == NULL){
                 continue;
             }
-            //只在出栈时输出。
-            res.push_back(node->val);
-            //右孩子入栈：先进后出
-            tStack.push(node->right);
-            //右孩子的所有左孩子入栈。
-            TreeNode * pLeft = NULL;
+            res.push_back(node->val);//访问根
+            tStack.push(node->right);//根结点访问后（出栈），才访问右结点。
             if(node->right){
                 pLeft = node->right->left;
             }
-            while(pLeft != NULL){
-                tStack.push(pLeft);//先进后出。出来时输出
+            while(pLeft){
+                tStack.push(pLeft);
                 pLeft = pLeft->left;
             }
         }
