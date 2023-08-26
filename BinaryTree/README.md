@@ -9,6 +9,7 @@
   - [递归](#递归-1)
   - [迭代 byStack](#迭代-bystack-1)
 - [层次遍历](#层次遍历)
+- [中序后序遍历序列构造树](#中序后序遍历序列构造树)
 
 # 二叉树
 
@@ -314,5 +315,36 @@ struct TreeNode {
                 levelIndex++;
             }
         }
+    }
+```
+
+# 中序后序遍历序列构造树
+
+leecode 106. 从中序与后序遍历序列构造二叉树
+[https://leetcode.cn/problems/construct-binary-tree-from-inorder-and-postorder-traversal](https://leetcode.cn/problems/construct-binary-tree-from-inorder-and-postorder-traversal)
+
+
+```C++
+    TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
+        int postIdx = postorder.size() - 1;
+        unordered_map<int,int> inIdx_map;
+        for(int i = 0; i < inorder.size(); i++){
+            inIdx_map[inorder[i]] = i;
+        }
+        return buildTree(inorder, 0, inorder.size() - 1, inIdx_map, postorder, postIdx);
+    }
+    TreeNode * buildTree(vector<int>inorder, int L, int R, unordered_map<int,int> &inIdx_map,
+                vector<int>& postorder,int &postIdx){
+        if(L > R){
+            return NULL;
+        }
+        int nodeVal = postorder[postIdx];
+        postIdx--;
+        TreeNode * node = new TreeNode(nodeVal);
+        int inIdx = inIdx_map[nodeVal];
+        //左右根--->根右左
+        node->right = buildTree(inorder, inIdx + 1, R, inIdx_map, postorder, postIdx);
+        node->left = buildTree(inorder, L, inIdx - 1, inIdx_map, postorder, postIdx);
+        return node;
     }
 ```
