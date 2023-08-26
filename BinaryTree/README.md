@@ -239,6 +239,32 @@ struct TreeNode {
   - 给新层次添加结果存储行
 
 ```C++
+    vector<vector<int>> levelOrder(TreeNode* root) {
+        queue<TreeNode*> tQueue;
+        vector<vector<int>> res;
+        if(NULL != root){
+            tQueue.push(root);
+        }
+        while(!tQueue.empty()){
+            int size = tQueue.size();
+            res.push_back(vector<int>());
+            while(size-- > 0){
+                TreeNode* node = tQueue.front();
+                tQueue.pop();
+                res.back().push_back(node->val);
+                if(node->left){
+                    tQueue.push(node->left);
+                }
+                if(node->right){
+                    tQueue.push(node->right);
+                }
+            }
+        }
+        return res;
+    }
+```
+
+```C++
     void levelOrderByQueue(TreeNode* root, vector<vector<int>>& res){
         if(root == NULL){
             return;
