@@ -72,6 +72,39 @@ struct TreeNode {
     }
 ```
 ## 迭代 byStack
+
+中序遍历。
+
+先入栈，出栈再访问。控制入栈顺序。
+- 入栈规则：
+  - 非空结点才栈
+  - 根结点先入栈
+  - 所有左结点入栈
+  - 结点出栈，访问
+  - 出栈取右孩子当根结点，重复
+```C++
+    vector<int> inorderTraversal(TreeNode* root) {
+        if(NULL == root){
+            return {};
+        }
+        stack<TreeNode*> tStack;
+        vector<int> res;
+        TreeNode* node = root;
+        while(node != NULL ||!tStack.empty()){
+            //dfs
+            while(node != NULL){
+                tStack.push(node);
+                node = node->left;
+            }
+            node = tStack.top();
+            tStack.pop();
+            res.push_back(node->val);
+            node = node->right;
+        }
+        return res;
+    }
+```
+
 ```C++
     void inorderByStack(TreeNode* root, vector<int> & res) {
         stack<TreeNode*> tStack;
