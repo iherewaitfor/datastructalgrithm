@@ -35,6 +35,31 @@ struct TreeNode {
     }
 ```
 ## 迭代 by Stack
+
+根左右。先访问再进栈。
+```C++
+    vector<int> preorderTraversal(TreeNode* root) {
+        vector<int> res;
+        if(NULL == root){
+            return res;
+        }
+        stack<TreeNode*> q;
+        TreeNode* node = root;
+        while(node != NULL || !q.empty()){
+            while(node != NULL){
+                res.push_back(node->val);
+                q.push(node);
+                node = node->left; //左孩子
+            }
+            node = q.top();
+            q.pop();
+            node = node->right;
+        }
+        return res;
+    }
+```
+
+
 ```C++
     void preOrderByStack(TreeNode * root, vector<int>&res){
         stack<TreeNode*> treeStack;
