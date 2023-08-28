@@ -42,3 +42,36 @@ K个一组翻转链表。力扣25。
 ```
 ```
 
+
+## 92. 反转链表 II
+反转链表 II
+[https://leetcode.cn/problems/reverse-linked-list-ii](https://leetcode.cn/problems/reverse-linked-list-ii)
+
+```C++
+    ListNode* reverseBetween(ListNode* head, int left, int right) {
+        int l = left;
+        int r = right;
+        ListNode * preHead = new ListNode(-1); //头结点的前一结点。只改next
+        preHead->next = head;
+        ListNode * pcur = head;          //找到left后，只改next
+        ListNode * preSubHead = preHead; //找到left后，只改next
+        int findLeft = 1;
+        while(findLeft != left){
+            pcur = pcur->next;
+            preSubHead= preSubHead->next;
+            findLeft++;
+        }
+        //反链表
+        int len = right - left;
+        while(len-- > 0){
+            //1,2,3,4
+            //临时指针
+            ListNode* oldHead = preSubHead->next;
+            preSubHead->next = pcur->next; //1指向3
+            pcur->next = pcur->next->next; //2指向4
+            preSubHead->next->next = oldHead;//3指向oldhead2
+            //1,3,2,4
+        }
+        return preHead->next;
+    }
+```
