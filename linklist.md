@@ -269,6 +269,85 @@ private:
 
 ```C++
 struct DListNode{
+    int key;
+    int val;
+    DListNode* next;
+    DListNode* pre;
+    DListNode(int k, int v):key(k),val(v),next(nullptr),pre(nullptr){}
+};
+class LRUCache {
+private:
+    const int m_capacity;
+    int m_size;
+    vector<DListNode*> m_keymap;//结点的值为key, 
+    DListNode* m_keyListHead;
+    DListNode* m_keyListTail;
+public:
+    LRUCache(int capacity):m_capacity(capacity),m_size(0)
+        ,m_keymap(vector<DListNode*>(10001,nullptr)){
+        //使用了伪头结点和伪尾结点，简单操作逻辑
+        m_keyListHead = new DListNode(-1,-1);
+        m_keyListTail = new DListNode(-1,-1);
+        m_keyListHead->next = m_keyListTail;
+        m_keyListTail->next = m_keyListHead;//结点操作，前后都有非空结点
+    }
+    
+    int get(int key) {
+        if(m_keymap[key] == nullptr){
+            return -1;
+        }
+        DListNode* keyNode = m_keymap[key];
+        moveToHead(keyNode);
+        return keyNode->val;
+    }
+    
+    void put(int key, int value) {
+        if(m_keymap[key] != nullptr){
+            //已经包含该key了，不影响 大小 ，只移动key结点到链头
+            DListNode* keyNode = m_keymap[key];
+            keyNode->val = value;
+            moveToHead(keyNode);
+            return;
+        }
+        //空的情况
+        //先插入新key
+        DListNode* newNode = new DListNode(key, value);
+        m_keymap[key] = newNode;
+        addToHead(newNode);
+        m_size++;
+        if(m_size > m_capacity){
+            //删掉队尾元素
+            DListNode* removedNode = removeTail();
+            m_keymap[removedNode->key] = nullptr;
+            delete removedNode;
+            m_size--;
+        }
+    }
+private:
+    void removeNode(DListNode* node) {
+        node->pre->next = node->next; //前指向后
+        node->next->pre = node->pre;  //后指向前
+    }
+    void addToHead(DListNode* node) {
+        node->pre = m_keyListHead;     //先处理新结点
+        node->next = m_keyListHead->next;
+        m_keyListHead->next->pre = node;
+        m_keyListHead->next = node;
+    }
+    void moveToHead(DListNode* node) {
+        removeNode(node);
+        addToHead(node);
+    }
+    DListNode* removeTail() {
+        DListNode* node = m_keyListTail->pre;
+        removeNode(node);
+        return node;
+    }
+};
+```
+
+```C++
+struct DListNode{
     int val;
     DListNode* next;
     DListNode* pre;
