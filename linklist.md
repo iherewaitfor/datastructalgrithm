@@ -1,3 +1,13 @@
+- [链表](#链表)
+- [206反转链表](#206反转链表)
+- [25. K个一组翻转链表](#25-k个一组翻转链表)
+- [92. 反转链表 II](#92-反转链表-ii)
+- [21. 合并两个有序链表](#21-合并两个有序链表)
+- [707. 设计链表](#707-设计链表)
+- [328. 奇偶链表](#328-奇偶链表)
+- [146. LRU 缓存](#146-lru-缓存)
+- [707. 设计链表（双向链表）](#707-设计链表双向链表)
+
 # 链表
 # 206反转链表
 力扣206[https://leetcode.cn/problems/reverse-linked-list/](https://leetcode.cn/problems/reverse-linked-list/)
@@ -95,7 +105,7 @@ K个一组翻转链表。力扣25。
 ```
 
 
-## 21. 合并两个有序链表
+# 21. 合并两个有序链表
 
 [https://leetcode.cn/problems/merge-two-sorted-lists](https://leetcode.cn/problems/merge-two-sorted-lists)
 
@@ -423,5 +433,95 @@ private:
     vector<int> m_dataMap;
     DListNode* m_keyListHead;
     DListNode* m_keyListTail;
+};
+```
+
+# 707. 设计链表（双向链表）
+[https://leetcode.cn/problems/design-linked-list](https://leetcode.cn/problems/design-linked-list)
+
+```C++
+struct DListNode{
+    int val;
+    DListNode* next;
+    DListNode* prev;
+    DListNode(int v):val(v),next(nullptr),prev(nullptr){}
+};
+class MyLinkedList {
+private:
+    DListNode* m_head;
+    DListNode* m_tail;
+    int m_size;
+public:
+    MyLinkedList():m_size(0) {
+        m_head = new DListNode(-1);
+        m_tail = new DListNode(-2);
+        m_head->next = m_tail;
+        m_tail->prev = m_head;
+    }
+    
+    int get(int index) {
+        if(index < 0 || index > m_size - 1  || 0 == m_size){
+            return -1;
+        }
+        DListNode* pcur = m_head->next;
+        int target = 0;
+        while(target++ != index){
+            pcur = pcur->next;
+        }
+        return pcur->val;
+    }
+    
+    void addAtHead(int val) {
+        DListNode* node = new DListNode(val);
+        node->next = m_head->next;
+        node->prev = m_head;
+        m_head->next->prev = node;
+        m_head->next = node;
+        m_size++;
+    }
+    
+    void addAtTail(int val) {
+        DListNode* node = new DListNode(val);
+        node->next = m_tail;
+        node->prev = m_tail->prev;
+        m_tail->prev->next = node;
+        m_tail->prev = node;
+        m_size++;
+    }
+    
+    void addAtIndex(int index, int val) {
+        if(index < 0 || index > m_size){
+            return ;
+        }
+        if(index == m_size){
+            addAtTail(val);
+            return;
+        }
+        DListNode* pre = m_head;
+        int target = 0;
+        while(target++ != index){
+            pre = pre->next;
+        }
+        DListNode* node = new DListNode(val);
+        node->next = pre->next;
+        node->prev = pre;
+        pre->next->prev = node;
+        pre->next = node;
+        m_size++;
+    }
+    
+    void deleteAtIndex(int index) {
+        if(0 == m_size || index < 0 || index > m_size-1){
+            return ;
+        }
+        DListNode* pcur = m_head->next;
+        int target = 0;
+        while(target++ != index){
+            pcur = pcur->next;
+        }
+        pcur->prev->next = pcur->next;
+        pcur->next->prev = pcur->prev;
+        m_size--;
+    }
 };
 ```
