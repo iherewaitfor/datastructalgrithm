@@ -1,9 +1,27 @@
 # 链表
-## 206反转链表
+# 206反转链表
 力扣206[https://leetcode.cn/problems/reverse-linked-list/](https://leetcode.cn/problems/reverse-linked-list/)
 
 原题
 ```
+```
+使用preHead简化逻辑
+```C++
+    ListNode* reverseList(ListNode* head) {
+        if(NULL == head){
+            return head;
+        }
+        ListNode* preHead = new ListNode(-1);
+        preHead->next = head;
+        ListNode* pcur = head;
+        while(pcur->next != NULL){
+            ListNode* tempOldHead = preHead->next;//保存旧头部,一会新头需要指向该结点
+            preHead->next = pcur->next;     //新头部
+            pcur->next = pcur->next->next;  //当前结点往前走一个结点
+            preHead->next->next = tempOldHead; //新头部的next指向旧头部
+        }
+        return preHead->next;
+    }
 ```
 
 答题
@@ -34,7 +52,7 @@ public:
     }
 };
 ```
-## 25. K个一组翻转链表
+# 25. K个一组翻转链表
 K个一组翻转链表。力扣25。
 
 [https://leetcode.cn/problems/reverse-nodes-in-k-group](https://leetcode.cn/problems/reverse-nodes-in-k-group)
@@ -43,7 +61,7 @@ K个一组翻转链表。力扣25。
 ```
 
 
-## 92. 反转链表 II
+# 92. 反转链表 II
 反转链表 II
 [https://leetcode.cn/problems/reverse-linked-list-ii](https://leetcode.cn/problems/reverse-linked-list-ii)
 
@@ -74,4 +92,142 @@ K个一组翻转链表。力扣25。
         }
         return preHead->next;
     }
+```
+
+
+## 21. 合并两个有序链表
+
+[https://leetcode.cn/problems/merge-two-sorted-lists](https://leetcode.cn/problems/merge-two-sorted-lists)
+
+```C++
+    ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
+        ListNode* preHead3 = new ListNode(-3); //合并链表preHead
+        ListNode* pcur1 = list1;
+        ListNode* pcur2 = list2;
+        ListNode* pcur3 = preHead3;
+        while(nullptr != pcur1 && nullptr != pcur2){
+            if(pcur1->val < pcur2->val){
+                pcur3->next = pcur1;
+                pcur1 = pcur1->next;
+                pcur3 = pcur3->next;
+                pcur3->next = nullptr;
+            } else {
+                pcur3->next = pcur2;
+                pcur2 = pcur2->next;
+                pcur3 = pcur3->next;
+                pcur3->next = nullptr;
+            }
+        }
+        while(nullptr != pcur1){
+            pcur3->next = pcur1;
+            pcur1 = pcur1->next;
+            pcur3 = pcur3->next;
+            pcur3->next = nullptr;
+        }
+        while(nullptr != pcur2){
+            pcur3->next = pcur2;
+            pcur2 = pcur2->next;
+            pcur3 = pcur3->next;
+            pcur3->next = nullptr;
+        }
+        return preHead3->next;
+    }
+```
+
+# 707. 设计链表
+
+[https://leetcode.cn/problems/design-linked-list/](https://leetcode.cn/problems/design-linked-list/)
+
+- 注意合理使用preHead结点
+  - preHead = new ListNode(-1);
+  - 能简化边界处理逻辑
+- 
+
+```C++
+struct LinkNode{
+    int val;
+    LinkNode* next;
+    LinkNode(int v):val(v),next(nullptr){}
+};
+class MyLinkedList {
+public:
+    MyLinkedList():head(nullptr),preHead(new LinkNode(-1)),size(0){
+
+    }
+    
+    int get(int index) {
+        if(index < 0 || index > size -1){
+            return -1;
+        }
+        LinkNode * pcur = preHead;
+        int i = -1;
+        while(i++ != index){
+            pcur = pcur->next;
+        }
+        return pcur->val;
+    }
+    
+    void addAtHead(int val) {
+        LinkNode* newNode = new LinkNode(val);
+        newNode->next = head;
+        preHead->next = newNode;
+        head = preHead->next;
+        size++;
+    }
+    
+    void addAtTail(int val) {
+        LinkNode * newNode = new LinkNode(val);
+        LinkNode * pcur = preHead;
+        //找队尾
+        while(nullptr != pcur->next){
+            pcur = pcur->next;
+        }
+        pcur->next = newNode;
+        size++;
+    }
+    
+    void addAtIndex(int index, int val) {
+        LinkNode * newNode = new LinkNode(val);
+        LinkNode * pre = preHead; 
+        if(index < 0 || index > size ){
+            //非法下标
+            return ;
+        }
+        int i = 0;
+        while(i++ != index){
+            pre = pre->next;
+        }
+        newNode->next = pre->next;
+        pre->next = newNode;
+        size++;
+    }
+    
+    void deleteAtIndex(int index) {
+        LinkNode * pre = preHead; 
+        if(index < 0 || index > size-1 ){
+            //非法下标
+            return ;
+        }
+        int i = 0;
+        while(i++ != index){
+            pre = pre->next;
+        }
+        pre->next = pre->next->next;
+        size--;
+    }
+private:
+    LinkNode* head;
+    LinkNode* preHead;
+    int size;
+};
+
+/**
+ * Your MyLinkedList object will be instantiated and called as such:
+ * MyLinkedList* obj = new MyLinkedList();
+ * int param_1 = obj->get(index);
+ * obj->addAtHead(val);
+ * obj->addAtTail(val);
+ * obj->addAtIndex(index,val);
+ * obj->deleteAtIndex(index);
+ */
 ```
