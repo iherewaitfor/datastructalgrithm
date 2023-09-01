@@ -231,3 +231,118 @@ private:
  * obj->deleteAtIndex(index);
  */
 ```
+
+# 328. 奇偶链表
+[https://leetcode.cn/leetbook/read/linked-list](https://leetcode.cn/leetbook/read/linked-list)
+
+```C++
+    ListNode* oddEvenList(ListNode* head) {
+        if(nullptr == head || nullptr == head->next ||nullptr == head->next->next){
+            return head;
+        }
+        ListNode* preHead1 = new ListNode(-1);
+        preHead1->next = head;
+        ListNode* pTail1 = head;
+        ListNode* preHead2 = new ListNode(-2);//开始是空链表
+        ListNode* pTail2 = preHead2;
+        int index = 1;
+        while(pTail1->next){
+            if(index++ % 2 == 0){ 
+                //说明要放到队列1的尾部
+                pTail1 = pTail1->next;   
+            } else {
+                //要放到队列2
+                pTail2->next = pTail1->next;
+                pTail2 = pTail2->next;
+                pTail1->next = pTail1->next->next;
+            }
+        }
+        pTail1->next = preHead2->next;
+        pTail2->next =nullptr;
+        return preHead1->next;
+    }
+```
+
+
+# 146. LRU 缓存
+[https://leetcode.cn/problems/lru-cache](https://leetcode.cn/problems/lru-cache)
+
+```C++
+struct DListNode{
+    int val;
+    DListNode* next;
+    DListNode* pre;
+    DListNode(int v):val(v),next(nullptr),pre(nullptr){}
+};
+class LRUCache {
+public:
+    LRUCache(int capacity):m_capacity(capacity),m_size(0)
+        ,m_keymap(vector<DListNode*>(10001,nullptr))
+        ,m_dataMap(vector<int>(100001)){
+        m_keyListHead = new DListNode(-1);
+        m_keyListTail = new DListNode(-1);
+        m_keyListHead->next = m_keyListTail;
+        m_keyListTail->next = m_keyListHead;
+    }
+    
+    int get(int key) {
+        if(m_keymap[key] == nullptr){
+            return -1;
+        }
+        DListNode* keyNode = m_keymap[key];
+        moveToHead(keyNode);
+        return m_dataMap[keyNode->val];
+    }
+    
+    void put(int key, int value) {
+        if(m_keymap[key] != nullptr){
+            //已经包含该key了，不影响 大小 ，只移动key结点到链头
+            DListNode* keyNode = m_keymap[key];
+            m_dataMap[key] = value;
+            moveToHead(keyNode);
+            return;
+        }
+        //空的情况
+        //先插入新key
+        DListNode* newNode = new DListNode(key);
+        m_keymap[key] = newNode;
+        m_dataMap[key] = value;
+        addToHead(newNode);
+        m_size++;
+        if(m_size > m_capacity){
+            //删掉队尾元素
+            DListNode* removedNode = removeTail();
+            m_keymap[removedNode->val] = nullptr;
+            delete removedNode;
+            m_size--;
+        }
+    }
+private:
+    void removeNode(DListNode* node) {
+        node->pre->next = node->next;
+        node->next->pre = node->pre;
+    }
+    void addToHead(DListNode* node) {
+        node->pre = m_keyListHead;
+        node->next = m_keyListHead->next;
+        m_keyListHead->next->pre = node;
+        m_keyListHead->next = node;
+    }
+    void moveToHead(DListNode* node) {
+        removeNode(node);
+        addToHead(node);
+    }
+    DListNode* removeTail() {
+        DListNode* node = m_keyListTail->pre;
+        removeNode(node);
+        return node;
+    }
+private:
+    const int m_capacity;
+    int m_size;
+    vector<DListNode*> m_keymap;//结点的值为key, 
+    vector<int> m_dataMap;
+    DListNode* m_keyListHead;
+    DListNode* m_keyListTail;
+};
+```
