@@ -6,6 +6,7 @@
 - [707. 设计链表](#707-设计链表)
 - [328. 奇偶链表](#328-奇偶链表)
 - [146. LRU 缓存](#146-lru-缓存)
+- [707. 设计链表（单链表）](#707-设计链表单链表)
 - [707. 设计链表（双向链表）](#707-设计链表双向链表)
 
 # 链表
@@ -433,6 +434,69 @@ private:
     vector<int> m_dataMap;
     DListNode* m_keyListHead;
     DListNode* m_keyListTail;
+};
+```
+
+# 707. 设计链表（单链表）
+[https://leetcode.cn/problems/design-linked-list](https://leetcode.cn/problems/design-linked-list)
+
+```C++
+class MyLinkedList {
+private:
+    ListNode* preHead;
+    int m_size;
+public:
+    MyLinkedList():m_size(0) {
+        preHead = new ListNode(-1);
+    }
+    
+    int get(int index) {
+        if(m_size == 0 || index < 0 || index >m_size -1){
+            return -1;
+        }
+        int i = 0;
+        ListNode* pcur = preHead->next;
+        while(i++ != index){
+            pcur = pcur->next;
+        }
+        return pcur->val;
+    }
+    
+    void addAtHead(int val) {
+        addAtIndex(0, val);
+    }
+    
+    void addAtTail(int val) {
+        addAtIndex(m_size, val);
+    }
+    
+    void addAtIndex(int index, int val) {
+        if(index < 0 || index >m_size){
+            return;
+        }
+        int i = 0;
+        ListNode* pre = preHead;
+        while(i++ != index){
+            pre = pre->next;
+        }
+        ListNode * node = new ListNode(val);
+        node->next = pre->next;
+        pre->next = node;
+        m_size++;
+    }
+    
+    void deleteAtIndex(int index) {
+        if(m_size == 0 || index < 0 || index >m_size-1){
+            return;
+        }
+        int i = 0;
+        ListNode* pre = preHead;
+        while(i++ != index){
+            pre = pre->next;
+        }
+        pre->next = pre->next->next;
+        m_size--;
+    }
 };
 ```
 
