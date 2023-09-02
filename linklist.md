@@ -516,6 +516,82 @@ private:
     DListNode* m_tail;
     int m_size;
 public:
+    MyLinkedList() {
+        m_head = new DListNode(-1);
+        m_size = 0;
+    }
+    
+    int get(int index) {
+        if(m_size == 0 || index < 0 || index > m_size-1){
+            return -1;
+        }
+        DListNode* pcur = m_head->next;
+        int i = 0; 
+        while(i++ != index){
+            pcur = pcur->next;
+        }
+        return pcur->val;
+    }
+    
+    void addAtHead(int val) {
+        addAtIndex(0,val);
+    }
+    
+    void addAtTail(int val) {
+        addAtIndex(m_size,val);
+    }
+    
+    void addAtIndex(int index, int val) {
+        if(index < 0 || index > m_size){
+            return ;
+        }
+        DListNode* pre = m_head;//注意找插入结点的前结点。
+        int i = 0; 
+        while(i++ != index){
+            pre = pre->next;
+        }
+        DListNode* node = new DListNode(val);
+        node->next = pre->next;
+        node->prev = pre;
+        if(pre->next){ //注意判空，可能是空链表的时候插入
+            pre->next->prev = node;
+        }
+        pre->next = node;
+        m_size++;
+    }
+    
+    void deleteAtIndex(int index) {
+        if(m_size == 0 || index < 0 || index > m_size-1){
+            return ;
+        }
+        DListNode* pre = m_head;//注意找删除结点的前结点。
+        int i = 0; 
+        while(i++ != index){
+            pre = pre->next;
+        }
+        pre->next = pre->next->next;
+        if(pre->next){ //注意可以是后最的结点为空。
+            pre->next->prev = pre;
+        }
+        m_size--;
+    }
+};
+```
+
+
+```C++
+struct DListNode{
+    int val;
+    DListNode* next;
+    DListNode* prev;
+    DListNode(int v):val(v),next(nullptr),prev(nullptr){}
+};
+class MyLinkedList {
+private:
+    DListNode* m_head;
+    DListNode* m_tail;
+    int m_size;
+public:
     MyLinkedList():m_size(0) {
         m_head = new DListNode(-1);
         m_tail = new DListNode(-2);
