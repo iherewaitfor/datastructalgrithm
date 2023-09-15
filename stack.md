@@ -56,3 +56,81 @@ public:
     }
 };
 ```
+
+# 133. 克隆图
+[https://leetcode.cn/problems/clone-graph](https://leetcode.cn/problems/clone-graph)
+
+```C++
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    vector<Node*> neighbors;
+    Node() {
+        val = 0;
+        neighbors = vector<Node*>();
+    }
+    Node(int _val) {
+        val = _val;
+        neighbors = vector<Node*>();
+    }
+    Node(int _val, vector<Node*> _neighbors) {
+        val = _val;
+        neighbors = _neighbors;
+    }
+};
+*/
+
+class Solution {
+public:
+    Node* cloneGraph(Node* node) {
+        unordered_map<Node*,Node*> visited;
+        return dfsbyStack(node, visited);
+        // unordered_map<Node*,Node*> visited;
+        // return dfs(node, visited);
+        
+    }
+    Node * dfsbyStack(Node* node, unordered_map<Node*,Node*> &visited){
+        if(NULL == node){
+            return NULL;
+        }
+        Node* cNode = new Node(node->val);
+        visited[node] = cNode;
+        //深度优先
+        stack<Node*> s;
+        s.push(node);
+        while(!s.empty()){
+            Node * source = s.top();
+            s.pop();
+            for(auto neighbor:source->neighbors){
+                if(visited.count(neighbor) < 1){
+                    //建副本结点
+                    Node* cneighbor = new Node(neighbor->val);
+                    visited[neighbor] = cneighbor;
+                    s.push(neighbor);
+                }
+                visited[source]->neighbors.push_back(visited[neighbor]);
+            }
+        }
+        return cNode;
+    }
+
+        //递归
+    Node * dfs(Node* node, unordered_map<Node*,Node*> &visited){
+        if(NULL == node){
+            return NULL;
+        }
+        if(visited.find(node) != visited.end()){
+            return visited[node];
+        }
+        //所有的方向 
+        Node* cNode = new Node(node->val);
+        visited[node] = cNode;
+        for(auto neighbor:node->neighbors){
+            cNode->neighbors.push_back(dfs(neighbor,visited ));
+        }
+        return cNode;
+    }
+};
+```
