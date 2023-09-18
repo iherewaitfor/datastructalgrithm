@@ -78,6 +78,31 @@ K个一组翻转链表。力扣25。
 
 ```C++
     ListNode* reverseBetween(ListNode* head, int left, int right) {
+        if(!head || !head->next){
+            return head;
+        }
+        ListNode node(-1);
+        ListNode* preHead = &node;
+        preHead->next = head;
+        ListNode* preLeft = preHead;
+        int findLeft = 1;
+        while(findLeft++ != left){
+            preLeft = preLeft->next;
+        }
+        int n = right - left;
+        ListNode* pcur = preLeft->next;
+        while(n-- > 0){
+            ListNode* temOldHead = preLeft->next;
+            preLeft->next = pcur->next;
+            pcur->next = preLeft->next->next;
+            preLeft->next->next = temOldHead;
+        }
+        return preHead->next;
+    }
+```
+
+```C++
+    ListNode* reverseBetween(ListNode* head, int left, int right) {
         int l = left;
         int r = right;
         ListNode * preHead = new ListNode(-1); //头结点的前一结点。只改next
@@ -104,6 +129,7 @@ K个一组翻转链表。力扣25。
         return preHead->next;
     }
 ```
+
 
 
 # 21. 合并两个有序链表
