@@ -10,6 +10,7 @@
   - [迭代 byStack](#迭代-bystack-1)
 - [层次遍历](#层次遍历)
 - [中序后序遍历序列构造树](#中序后序遍历序列构造树)
+- [297. 二叉树的序列化与反序列化](#297-二叉树的序列化与反序列化)
 
 # 二叉树
 
@@ -431,4 +432,123 @@ leecode 106. 从中序与后序遍历序列构造二叉树
         node->left = buildTree(inorder, L, inIdx - 1, inIdx_map, postorder, postIdx);
         return node;
     }
+```
+
+
+
+#  297. 二叉树的序列化与反序列化
+[https://leetcode.cn/problems/serialize-and-deserialize-binary-tree](https://leetcode.cn/problems/serialize-and-deserialize-binary-tree)
+
+
+
+
+以下使用前序和中序构建
+```C++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+ typedef struct NodeKey{
+     TreeNode* node;
+     int val;
+     NodeKey(TreeNode* p = nullptr, int v = 0):node(p),val(v){}
+ }NodeKey;
+class Codec {
+public:
+
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {
+        vector<NodeKey> preorderV;
+        preOrder(root, preorderV);
+        vector<NodeKey> inorderV;
+        inOrder(root, inorderV);
+        
+        int keySize = sizeof(NodeKey);
+        int allSize = 4 + preorderV.size() * keySize*2;
+        string treedata;
+        treedata.resize(allSize);
+        int size = preorderV.size();
+        int offset = 0;
+        char * dst = (char*)treedata.c_str();
+        memcpy(dst + offset, &size, 4);
+        offset +=4;
+        for(int i = 0 ; i < preorderV.size(); i++){
+            memcpy(dst + offset, &preorderV[i], keySize);
+            offset+=keySize;
+        }
+        for(int i = 0 ; i < inorderV.size(); i++){
+            memcpy(dst + offset, &inorderV[i], keySize);
+            offset+=keySize;
+        }
+        return treedata;
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data) {
+        int keySize = sizeof(NodeKey);
+        vector<NodeKey> preorderV;
+        vector<NodeKey> inorderV;
+        int offset = 0;
+        char * src = (char*)data.c_str();
+        int size = 0;
+        memcpy(&size, src + offset, 4);
+        offset+=4;
+        for(int i = 0; i < size; i++){
+            NodeKey node(nullptr, 0);
+            memcpy(&node, src + offset, keySize);
+            offset+=keySize;
+            preorderV.push_back(node);
+        }
+        for(int i = 0; i < size; i++){
+            NodeKey node(nullptr, 0);
+            memcpy(&node, src + offset, keySize);
+            offset+=keySize;
+            inorderV.push_back(node);
+        }
+        unordered_map<TreeNode*, int> idxMap;
+        for(int i = 0; i < inorderV.size(); i++){
+            idxMap[inorderV[i].node] = i;
+        }
+        return help(preorderV, 0, inorderV, 0, inorderV.size()-1, idxMap);
+    }
+
+
+private:
+    TreeNode* help(vector<NodeKey> &preorderV, int preIdx, vector<NodeKey> &inorderV, int L, int R, unordered_map<TreeNode*, int>& idxMap){
+        if(L > R){
+            return nullptr;
+        }
+        TreeNode* root = new TreeNode(preorderV[preIdx].val);
+        int rootIdx = idxMap[preorderV[preIdx].node];
+        root->left = help(preorderV, preIdx+1, inorderV, L, rootIdx-1, idxMap);
+        int lLen = rootIdx - L;
+        root->right = help(preorderV, preIdx + lLen+1, inorderV, rootIdx+1, R, idxMap);
+        return root;
+    }
+    void preOrder(TreeNode* root, vector<NodeKey> &preorderV){
+        if(!root){
+            return;
+        }
+        preorderV.emplace_back(root, root->val);
+        preOrder(root->left, preorderV);
+        preOrder(root->right, preorderV);
+    }
+    void inOrder(TreeNode* root, vector<NodeKey> &inorderV){
+        if(!root){
+            return;
+        }
+        inOrder(root->left, inorderV);
+        inorderV.emplace_back(root, root->val);
+        inOrder(root->right, inorderV);
+    }
+};
+
+// Your Codec object will be instantiated and called as such:
+// Codec ser, deser;
+// TreeNode* ans = deser.deserialize(ser.serialize(root));
 ```
