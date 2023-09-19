@@ -11,6 +11,9 @@
 - [层次遍历](#层次遍历)
 - [中序后序遍历序列构造树](#中序后序遍历序列构造树)
 - [297. 二叉树的序列化与反序列化](#297-二叉树的序列化与反序列化)
+  - [使用前序遍历构建](#使用前序遍历构建)
+  - [使用层次遍历构建](#使用层次遍历构建)
+  - [使用前序中序构建](#使用前序中序构建)
 
 # 二叉树
 
@@ -438,10 +441,247 @@ leecode 106. 从中序与后序遍历序列构造二叉树
 
 #  297. 二叉树的序列化与反序列化
 [https://leetcode.cn/problems/serialize-and-deserialize-binary-tree](https://leetcode.cn/problems/serialize-and-deserialize-binary-tree)
+## 使用前序遍历构建
+```C++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+ typedef struct NodeKey{
+     TreeNode* node;
+     int val;
+     TreeNode* left;
+     TreeNode* right;
+     NodeKey(TreeNode* p = nullptr, int v = 0, TreeNode* l = nullptr, TreeNode* r = nullptr):node(p),
+     val(v),left(l),right(r){}
+ }NodeKey;
+class Codec {
+public:
+
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {
+        vector<NodeKey> bfsv;
+        preorder(root, bfsv);
+        int keySize = sizeof(NodeKey);
+        int allSize = 4 + bfsv.size() * keySize;
+        string treedata;
+        treedata.resize(allSize);
+        int size = bfsv.size();
+        int offset = 0;
+        char * dst = (char*)treedata.c_str();
+        memcpy(dst + offset, &size, 4);
+        offset +=4;
+        for(int i = 0 ; i < bfsv.size(); i++){
+            memcpy(dst + offset, &bfsv[i], keySize);
+            offset+=keySize;
+        }
+        return treedata;
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data) {
+        int keySize = sizeof(NodeKey);
+        vector<NodeKey> bfsv;
+        int offset = 0;
+        char * src = (char*)data.c_str();
+        int size = 0;
+        memcpy(&size, src + offset, 4);
+        offset+=4;
+        for(int i = 0; i < size; i++){
+            NodeKey node(nullptr, 0);
+            memcpy(&node, src + offset, keySize);
+            offset+=keySize;
+            bfsv.push_back(node);
+        }
+        unordered_map<TreeNode*, int> idxMap;
+        for(int i = 0; i < bfsv.size(); i++){
+            idxMap[bfsv[i].node] = i;
+        }
+        if(size == 0){
+            return  nullptr;
+        }
+        return help(bfsv, idxMap);
+    }
 
 
+private:
+    TreeNode* help(vector<NodeKey> &bfsv, unordered_map<TreeNode*, int>& idxMap){
+        if(bfsv.size() == 0){
+            return nullptr;
+        }
+        unordered_map<TreeNode*,TreeNode*> nmap; // source to node map
+        for(int i = 0; i < bfsv.size(); i++){
+            TreeNode* node = nmap[bfsv[i].node];
+            if(!node){
+                node = new TreeNode(bfsv[i].val);
+                nmap[bfsv[i].node] = node;
+            }
+            if(bfsv[i].left != nullptr){
+                if(nmap.count(bfsv[i].left ) < 1){
+                    int val = bfsv[idxMap[bfsv[i].left]].val;
+                    node->left = new TreeNode(val);
+                    nmap[bfsv[i].left] = node->left;
+                } else {
+                    node->left = nmap[bfsv[i].left];
+                }
+                
+            }
+            if(bfsv[i].right != nullptr){
+                if(nmap.count(bfsv[i].right ) < 1){
+                    int val = bfsv[idxMap[bfsv[i].right]].val;
+                    node->right = new TreeNode(val);
+                    nmap[bfsv[i].right] = node->right;
+                } else {
+                    node->right = nmap[bfsv[i].right];
+                }
+            }
+        }
+        return nmap[bfsv[0].node];
+    }
+    void preorder(TreeNode* root, vector<NodeKey> &preV){
+        if(!root){
+            return;
+        }
+        preV.emplace_back(root, root->val, root->left, root->right);
+        preorder(root->left, preV);
+        preorder(root->right, preV);
+    }
+};
+```
+
+## 使用层次遍历构建
+```C++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+ typedef struct NodeKey{
+     TreeNode* node;
+     int val;
+     TreeNode* left;
+     TreeNode* right;
+     NodeKey(TreeNode* p = nullptr, int v = 0, TreeNode* l = nullptr, TreeNode* r = nullptr):node(p),
+     val(v),left(l),right(r){}
+ }NodeKey;
+class Codec {
+public:
+
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {
+        vector<NodeKey> bfsv;
+        bfs(root, bfsv);
+        int keySize = sizeof(NodeKey);
+        int allSize = 4 + bfsv.size() * keySize;
+        string treedata;
+        treedata.resize(allSize);
+        int size = bfsv.size();
+        int offset = 0;
+        char * dst = (char*)treedata.c_str();
+        memcpy(dst + offset, &size, 4);
+        offset +=4;
+        for(int i = 0 ; i < bfsv.size(); i++){
+            memcpy(dst + offset, &bfsv[i], keySize);
+            offset+=keySize;
+        }
+        return treedata;
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data) {
+        int keySize = sizeof(NodeKey);
+        vector<NodeKey> bfsv;
+        int offset = 0;
+        char * src = (char*)data.c_str();
+        int size = 0;
+        memcpy(&size, src + offset, 4);
+        offset+=4;
+        for(int i = 0; i < size; i++){
+            NodeKey node(nullptr, 0);
+            memcpy(&node, src + offset, keySize);
+            offset+=keySize;
+            bfsv.push_back(node);
+        }
+        unordered_map<TreeNode*, int> idxMap;
+        for(int i = 0; i < bfsv.size(); i++){
+            idxMap[bfsv[i].node] = i;
+        }
+        if(size == 0){
+            return  nullptr;
+        }
+        return help(bfsv, idxMap);
+    }
 
 
+private:
+    TreeNode* help(vector<NodeKey> &bfsv, unordered_map<TreeNode*, int>& idxMap){
+        if(bfsv.size() == 0){
+            return nullptr;
+        }
+        unordered_map<TreeNode*,TreeNode*> nmap; // source to node map
+        for(int i = 0; i < bfsv.size(); i++){
+            TreeNode* node = nmap[bfsv[i].node];
+            if(!node){
+                node = new TreeNode(bfsv[i].val);
+                nmap[bfsv[i].node] = node;
+            }
+            if(bfsv[i].left != nullptr){
+                if(nmap.count(bfsv[i].left ) < 1){
+                    int val = bfsv[idxMap[bfsv[i].left]].val;
+                    node->left = new TreeNode(val);
+                    nmap[bfsv[i].left] = node->left;
+                } else {
+                    node->left = nmap[bfsv[i].left];
+                }
+                
+            }
+            if(bfsv[i].right != nullptr){
+                if(nmap.count(bfsv[i].right ) < 1){
+                    int val = bfsv[idxMap[bfsv[i].right]].val;
+                    node->right = new TreeNode(val);
+                    nmap[bfsv[i].right] = node->right;
+                } else {
+                    node->right = nmap[bfsv[i].right];
+                }
+            }
+        }
+        return nmap[bfsv[0].node];
+    }
+    void bfs(TreeNode* node, vector<NodeKey> &bfsV){
+        if(!node){
+            return;
+        }
+        queue<TreeNode*> q;
+        q.push(node);
+        while(!q.empty()){
+            TreeNode* root = q.front();
+            q.pop();
+            bfsV.emplace_back(root, root->val, root->left, root->right);
+            if(root->left){
+                q.push(root->left);
+            }
+            if(root->right){
+                q.push(root->right);
+            }
+        }
+    }
+};
+
+// Your Codec object will be instantiated and called as such:
+// Codec ser, deser;
+// TreeNode* ans = deser.deserialize(ser.serialize(root));
+```
+
+## 使用前序中序构建
 以下使用前序和中序构建
 ```C++
 /**
