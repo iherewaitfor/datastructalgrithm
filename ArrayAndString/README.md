@@ -6,6 +6,7 @@
 使用KMP算法。
 - next数组
  - 由子串独立生成
+ - 长度为子串的长度
 
 ```C++
     int strStr(string haystack, string needle) {
