@@ -50,3 +50,23 @@
         return true;;
     }
 ```
+
+# 435. 无重叠区间
+[435. 无重叠区间](https://leetcode.cn/problems/non-overlapping-intervals)
+
+```C++
+    int eraseOverlapIntervals(vector<vector<int>>& intervals) {
+        sort(intervals.begin(), intervals.end(), [](const auto& u, const auto& v)->bool {
+            return u[1] < v[1];
+        });
+        int right = intervals[0][1];
+        int count = 1;
+        for(int i = 1; i < intervals.size(); i++){
+            if(intervals[i][0] >= right){
+                right = intervals[i][1];
+                count++;
+            }
+        }
+        return intervals.size() - count; 
+    }
+```
