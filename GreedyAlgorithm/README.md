@@ -70,3 +70,24 @@
         return intervals.size() - count; 
     }
 ```
+# 452. 用最少数量的箭引爆气球
+[452. 用最少数量的箭引爆气球](https://leetcode.cn/problems/minimum-number-of-arrows-to-burst-balloons)
+```C++
+    int findMinArrowShots(vector<vector<int>>& points) {
+        if(points.empty()){
+            return 0;
+        }
+        sort(points.begin(), points.end(), [](const vector<int>&u, const vector<int>&v){
+            return u[1] < v[1];
+        });
+        int arrow = points[0][1];
+        int count = 1;
+        for(auto& point:points){
+            if(point[0] > arrow){
+                arrow = point[1];
+                ++count;
+            }
+        }
+        return count;
+    }
+```
