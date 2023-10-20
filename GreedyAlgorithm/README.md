@@ -91,3 +91,21 @@
         return count;
     }
 ```
+# 56. 合并区间
+[56. 合并区间](https://leetcode.cn/problems/merge-intervals)
+```C++
+    vector<vector<int>> merge(vector<vector<int>>& intervals) {
+        sort(intervals.begin(), intervals.end());
+        vector<vector<int>> merged;
+        for(auto & interval: intervals){
+            int L = interval[0];
+            int R = interval[1];
+            if(merged.size() == 0 || merged.back()[1] < L){
+                merged.push_back(interval);
+            } else {
+                merged.back()[1] = max(merged.back()[1], R);
+            }
+        }
+        return merged;
+    }
+```
