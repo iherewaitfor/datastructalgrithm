@@ -109,3 +109,21 @@
         return merged;
     }
 ```
+
+# 55. 跳跃游戏
+[55. 跳跃游戏](https://leetcode.cn/problems/jump-game)
+```C++
+    bool canJump(vector<int>& nums) {
+        int rightmost = 0;
+        for(int i = 0; i < nums.size(); i++){
+            if(i > rightmost){
+                return false;
+            }
+            rightmost = max(rightmost, i+nums[i]);
+            if(rightmost >= nums.size()-1){
+                return true;
+            }
+        }
+        return true;
+    }
+```
