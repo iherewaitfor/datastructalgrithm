@@ -32,32 +32,19 @@ int caldata(const string& str) {
                 datas.push(opdata);
             }
         }
-        else if (c == '*' || c == '/') {
+        else if (c == '*' || c == '/' || c == '+' || c == '-') {
             datas.push(opdata);
             opdata = 0;
             //2*  直接push
             //2*3*  //先计算2*3
             //1+2*3//直接push
-            if (ops.size() > 0 && (ops.top() == '*' || ops.top() == '/')) {
-                int b = datas.top();
-                datas.pop();
-                int a = datas.top();
-                datas.pop();
-                char opc = ops.top();
-                ops.pop();
-                int r = calAB(a, b, opc);
-                datas.push(r);
-            }
-            ops.push(c);
-        }
-        else if (c == '+' || c == '-') {
-            datas.push(opdata);
-            opdata = 0;
-            //1*
-            //1*2*3
-            //1+2*3
-            if (ops.size() > 0){
-                //先计算栈里的运算式
+            if (ops.size() > 0 &&(
+                ( ops.top() == '*' || ops.top() == '/')||
+                  (c == '+' || c=='-')
+                )) {
+                //操作栈非空，何时需要先计算栈内操作符
+                //(1)当前操作符为+-时 。1+2+    或1*2+ 或 2/1*3
+                //或(2)栈顶操作符为*/时， 1*2+ 或1*2*
                 int b = datas.top();
                 datas.pop();
                 int a = datas.top();
@@ -86,10 +73,12 @@ int caldata(const string& str) {
 int main()
 {
     //std::string str = "1+2";
+    //std::string str = "11+22";
     //std::string str = "1+2-3";
     //std::string str = "1+2+3";
     //std::string str = "1+2*3";
-    string str = "11+10/5";
+    //string str = "11+10/5";
+    string str = "11*10-20";
     int r = caldata(str);
     cout << "str:" << str << "=" << r << endl;
     cout << endl;
