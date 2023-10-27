@@ -134,3 +134,94 @@ public:
     }
 };
 ```
+
+# 四则运算
+
+- 栈应用
+- 优先级
+  - 何时先计算栈内数据
+    - 当前操作符为+或-
+    - 栈顶操作符为*或/
+- 边界
+  - 最后一个操作数
+    - 达到末尾字符时，把最后一个操作数入栈。
+
+```C++
+#include <iostream>
+#include <stack>
+using namespace std;
+int calAB(int a, int b, char op) {
+    int r = 0;
+    if (op == '+') {
+        r = a + b;
+    }
+    else if (op == '-') {
+        r = a - b;
+    }
+    else if (op == '*') {
+        r = a * b;
+    }
+    else if (op == '/') {
+        r = a / b;
+    }
+    cout << "calAB:" << a << op << b << "=" << r << endl;
+    return r;
+}
+
+int caldata(const string& str) {
+    stack<int> datas;
+    stack<char> ops;
+    int opdata = 0;
+    for (int i = 0; i < str.size(); i++) {
+        char c = str[i];
+        if (c >= '0' && c <= '9') {
+            opdata = c - '0' + opdata * 10;
+            if (i == str.size() - 1) {
+                datas.push(opdata);
+            }
+        }
+        else if(c == '+' || c=='-' || c=='*' || c=='/'){
+            datas.push(opdata);
+            opdata = 0;
+            if (ops.size()>0 && (
+                (c=='+' || c=='-')||
+                (ops.top() == '*' || ops.top() == '/')
+                )) {
+                int b = datas.top();
+                datas.pop();
+                int a = datas.top();
+                datas.pop();
+                char opc = ops.top();
+                ops.pop();
+                int r = calAB(a, b, opc);
+                datas.push(r);
+            }
+            ops.push(c);
+        }
+    }
+    while (ops.size() > 0) {
+        int b = datas.top();
+        datas.pop();
+        int a = datas.top();
+        datas.pop();
+        char opc = ops.top();
+        ops.pop();
+        int r = calAB(a, b, opc);
+        datas.push(r);
+    }
+    return datas.top();
+}
+int main()
+{
+    //std::string str = "1+2";
+    //std::string str = "11+22";
+    //std::string str = "1+2-3";
+    //std::string str = "1+2+3";
+    //std::string str = "1+2*3";
+    //string str = "11+10/5";
+    string str = "11*10-20";
+    int r = caldata(str);
+    cout << "str:" << str << "=" << r << endl;
+    cout << endl;
+}
+```
