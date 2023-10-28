@@ -3,120 +3,140 @@
 #include <vector>
 #include <string>
 using namespace std;
-vector<string> getrnp(const string& str, vector<string>& exps) {
-    string temp;
-    for (char c : str) {
-        if (c != ' ') {
-            temp.append(1, c);
+class Solution {
+public:
+    void printstr(vector<string> words) {
+        for (auto& w : words) {
+            cout << w << " ";
         }
+        cout << endl;
     }
-    string word;
-    for (char c : temp) {
-        if (c == '(' || c == ')' || c == '*' || c == '/' || c == '+' || c == '-') {
-            if (!word.empty()) {
-                exps.emplace_back(word);
-                word = "";
-            }
-            word.append(1, c);
-            exps.emplace_back(word);
-            word = "";
-        }
-        else {
-            word.append(1, c);
-        }
-    }
-    if (!word.empty()) {
-        exps.emplace_back(word);
-    }
+    int calculate(string s) {
+        vector<string> words;
+        getwords(s, words);
+        printstr(words);
+        vector<string> rpn = getrpn(words);
+        printstr(rpn);
+        int r = calrpn(rpn);
+        return r;
 
-    //取逆波栏表达式
-    vector<string> nrp;
-    stack<string> s;
-    for (auto word : exps) {
-        if (word == "+" || word == "-" || word == "(" ) {
-            //入栈
-            if (!s.empty() &&(s.top() == "*" || s.top() == "/")) {
-                //全部出栈。* /的优先级更高。先计算栈内的操作。
-                while (!s.empty()) {
-                    nrp.emplace_back(s.top());
+
+    }
+    int calab(int a, int b, const string& opc) {
+        int r = 0;
+        if (opc == "+") {
+            r = a + b;
+        }
+        else if (opc == "-") {
+            r = a - b;
+        }
+        else if (opc == "*") {
+            r = a * b;
+        }
+        else if (opc == "/") {
+            r = a / b;
+        }
+        cout << "calab:" << a << opc << b << "=" << r << endl;
+        return r;
+    }
+    int calrpn(const vector<string>& rpn) {
+        stack<int> s;
+        for (auto& v : rpn) {
+            if (v == "+" || v == "-" || v == "*" || v == "/") {
+                int b = s.top();
+                s.pop();
+                int a = s.top();
+                s.pop();
+                int r = calab(a, b, v);
+                s.push(r);
+            }
+            else {
+                s.push(stoi(v));
+            }
+        }
+        return s.top();
+    }
+    vector<string> getrpn(const vector<string>& words) {
+        vector<string> rpn;
+        stack<string> s; //符号栈
+        for (auto& v : words) {
+            //优先级排序，其中右括号直接出栈不参与比较
+            //*/
+            //+-
+            //(
+            if (v == "+" || v == "-") {
+                //优先级较低,先计算栈内所有运算符。除非遇到(
+                while (!s.empty() && (s.top() != "(")) {
+                    rpn.emplace_back(s.top());
                     s.pop();
                 }
+                s.push(v);
             }
-            s.push(word);//入栈
-        }
-        else if (word == ")") {
-            //出栈，直到遇到"("
-            while (s.top() != "(") {
-                nrp.emplace_back(s.top());
+            else if (v == "*" || v == "/") {
+                //优先级较高
+                //只有*或/优先级不比*/高。
+                while (!s.empty() && (s.top() == "*" || s.top() == "/")) {
+                    rpn.emplace_back(s.top());
+                    s.pop();
+                }
+                s.push(v);
+            }
+            else if (v == ")") {
+                //直到取到(
+                while (s.top() != "(") {
+                    rpn.emplace_back(s.top());
+                    s.pop();
+                }
                 s.pop();
             }
-            s.pop();//(出栈
+            else if (v == "(") {
+                s.push(v);
+            }
+            else {//数值不入栈
+                rpn.emplace_back(v);
+            }
         }
-        else if (word == "*" || word == "/") {
-            s.push(word);
-        }
-        else {
-            //数值
-            nrp.emplace_back(word);
-        }
-    }
-    while (!s.empty()) {
-        nrp.emplace_back(s.top());
-        s.pop();
-    }
-    return nrp;
-}
-int calab(int a, int b, string c) {
-    int r = 0;
-    if (c == "+") {
-        r = a + b;
-    }
-    else if (c == "-") {
-        r = a - b;
-    }
-    else if (c == "*") {
-        r = a * b;
-    }
-    else if (c == "/") {
-        r = a / b;
-    }
-    cout << "calab:" << a << c << b << "=" << r << endl;
-    return r;
-}
-int calnrp(vector<string>& nrp) {
-    stack<int> s;
-    for (auto& word : nrp) {
-        if (word == "+" || word == "-" || word == "*" || word == "/") {
-            int b = s.top();
+        while (!s.empty()) {
+            rpn.emplace_back(s.top());
             s.pop();
-            int a = s.top();
-            s.pop();
-            int r = calab(a, b, word);
-            s.push(r);
         }
-        else {
-            s.push(stoi(word));
+        return rpn;
+    }
+    void getwords(const string& s, vector<string>& words) {
+        string str;
+        for (char c : s) {
+            if (c != ' ') {
+                str.append(1, c);
+            }
+        }
+        string word;
+        for (char c : str) {
+            if (c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')') {
+                if (!word.empty()) {
+                    words.push_back(word);
+                    word = "";
+                }
+                word.append(1, c);
+                words.push_back(word);
+                word = "";
+            }
+            else {
+                word.append(1, c);
+            }
+        }
+        if (!word.empty()) {
+            words.push_back(word);
+            word = "";
         }
     }
-    return s.top();
-}
+};
 int main()
 {
-    vector<string> exps;
-    vector<string> npr;
-    //string nstr = "1+2";
-    //string nstr = " 1 +2 ";
-    string nstr = "9+(3-1)*3+10/2";
-    npr = getrnp(nstr, exps);
-    cout << nstr << endl;
-    for (auto& s : exps) {
-        cout << s;
-    }
-    cout << endl;
-
-    for (auto& s : npr) {
-        cout << s << " ";
-    }
-    cout << endl;
-    cout << calnrp(npr) << endl;
+    Solution slo;
+    //slo.calculate("2-1+2");
+    //slo.calculate("(1+(4+5+2)-3)+(6+8)");    
+    //slo.calculate("11+10");
+    //slo.calculate("11+10*2");
+    //slo.calculate("11+(20+10)*2");
+    slo.calculate("20*(10/2)");
 }
