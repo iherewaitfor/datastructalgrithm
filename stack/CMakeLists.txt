@@ -10,3 +10,5 @@ project (stack)
 set(TARGET_OUT_DIR "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 
 add_subdirectory(caculator)
+add_subdirectory(nprcal)
+
