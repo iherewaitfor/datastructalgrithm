@@ -1,26 +1,45 @@
 #include <iostream>
 #include <stack>
-#include <vector>
 #include <string>
+#include <list>
 using namespace std;
 class Solution {
 public:
-    void printstr(vector<string> words) {
+    void printstr(list<string> words) {
         for (auto& w : words) {
             cout << w << " ";
         }
         cout << endl;
     }
     int calculate(string s) {
-        vector<string> words;
-        getwords(s, words);
-        printstr(words);
-        vector<string> rpn = getrpn(words);
-        printstr(rpn);
-        int r = calrpn(rpn);
+        list<string> words;
+        getwords(s, words); //过滤空字符
+        //printstr(words);
+        handlsub(words);    //转换负号为0-
+        //printstr(words);
+        list<string> rpn = getrpn(words); //取得后缀表达式
+        //printstr(rpn);
+        int r = calrpn(rpn); //计算后缀表达式
         return r;
-
-
+    }
+    void handlsub(list<string>& words) {
+        if (words.front() == "-") {
+            words.push_front("0");
+        }
+        //1-(-2)转换为1-(0-2)
+        //-1-(-2)转换为0-1-(0-2)
+        auto it = words.begin();
+        it++;
+        for (; it != words.end(); ++it) {
+            if (*(it) == "-") {
+                --it;
+                if (*(it) == "(") {
+                    ++it;
+                    words.insert(it, "0");
+                }
+                ++it;
+            }
+        }
     }
     int calab(int a, int b, const string& opc) {
         int r = 0;
@@ -39,7 +58,7 @@ public:
         cout << "calab:" << a << opc << b << "=" << r << endl;
         return r;
     }
-    int calrpn(const vector<string>& rpn) {
+    int calrpn(const list<string>& rpn) {
         stack<int> s;
         for (auto& v : rpn) {
             if (v == "+" || v == "-" || v == "*" || v == "/") {
@@ -56,8 +75,8 @@ public:
         }
         return s.top();
     }
-    vector<string> getrpn(const vector<string>& words) {
-        vector<string> rpn;
+    list<string> getrpn(const list<string>& words) {
+        list<string> rpn;
         stack<string> s; //符号栈
         for (auto& v : words) {
             //优先级排序，其中右括号直接出栈不参与比较
@@ -102,7 +121,7 @@ public:
         }
         return rpn;
     }
-    void getwords(const string& s, vector<string>& words) {
+    void getwords(const string& s, list<string>& words) {
         string str;
         for (char c : s) {
             if (c != ' ') {
@@ -138,5 +157,8 @@ int main()
     //slo.calculate("11+10");
     //slo.calculate("11+10*2");
     //slo.calculate("11+(20+10)*2");
-    slo.calculate("20*(10/2)");
+    //slo.calculate("20*(10/2)");
+    slo.calculate("1-(     -2)"); //1-(0-2)
+    slo.calculate("-1-(     -2)"); //1-(0-2)
+    
 }
