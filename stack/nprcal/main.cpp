@@ -123,29 +123,26 @@ public:
     }
     void getwords(const string& s, list<string>& words) {
         string str;
-        for (char c : s) {
-            if (c != ' ') {
-                str.append(1, c);
-            }
-        }
         string word;
-        for (char c : str) {
-            if (c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')') {
-                if (!word.empty()) {
-                    words.push_back(word);
-                    word = "";
+        const int n = s.size();
+        for (int i = 0; i < n;) {
+            if (s[i] == ' ') {
+                i++;
+            }
+            else if (s[i] >= '0' && s[i] <= '9') {
+                while (i < n && s[i] >= '0' && s[i] <= '9') {
+                    word.append(1, s[i]);
+                    i++;
                 }
-                word.append(1, c);
-                words.push_back(word);
+                words.emplace_back(word);
                 word = "";
             }
             else {
-                word.append(1, c);
+                word.append(1, s[i]);
+                words.emplace_back(word);
+                word = "";
+                i++;
             }
-        }
-        if (!word.empty()) {
-            words.push_back(word);
-            word = "";
         }
     }
 };
