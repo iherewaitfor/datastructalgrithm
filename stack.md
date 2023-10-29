@@ -225,3 +225,47 @@ int main()
     cout << endl;
 }
 ```
+
+# 227. 基本计算器 II
+[227. 基本计算器 II](https://leetcode.cn/problems/basic-calculator-ii)
+
+```C++
+    int calculate(string s) {
+        vector<int> stk;
+        char presign = '+'; //当前操作数前面的操作符
+        int64_t num = 0;
+        int n = s.size();
+        for(int i = 0; i < n ; i++){
+            char c = s[i];
+            if(c >= '0' && c <= '9'){
+                num = num*10 + c-'0';
+            }
+            if(!(c >='0' && c <= '9') && c != ' ' || i == n-1){
+                //即c为操作符+-*/
+                //或者是最后一个数值
+                //触发栈内操作数计算
+                switch(presign){
+                    case '+':
+                        stk.push_back(num);
+                        break;
+                    case '-':
+                        stk.push_back(-num);
+                        break;
+                    case '*':
+                        stk.back() *= num;
+                        break;
+                    case '/':
+                        stk.back() /= num;
+                        break;
+                }
+                presign = c;//更新操作符
+                num = 0;
+            }
+        }
+        int sum = 0;
+        for(auto v: stk){
+            sum += v;
+        }
+        return sum;
+    }
+```
