@@ -1,74 +1,39 @@
 #include <iostream>
-#include <stack>
+#include <vector>
 using namespace std;
-
-int calAB(int a, int b, char op) {
-    int r = 0;
-    if (op == '+') {
-        r = a + b;
-    }
-    else if (op == '-') {
-        r = a - b;
-    }
-    else if (op == '*') {
-        r = a *b;
-    }
-    else if (op == '/') {
-        r = a / b;
-    }
-    cout << "calAB: " << a << op << b <<"="<<r << endl;
-    return r;
-}
-
-int caldata(const string& str) {
-    stack<int> datas;
-    stack<char> ops;
-    int opdata = 0;
-    for (int i = 0; i < str.size(); i++) {
-        char c = str[i];
+int calculate(string s) {
+    vector<int> stk;
+    char preSign = '+';
+    int64_t num = 0;
+    int n = s.size();
+    for (int i = 0; i < n; i++) {
+        char c = s[i];
         if (c >= '0' && c <= '9') {
-            opdata = c - '0' + opdata * 10;
-            if (i == str.size() - 1) {
-                datas.push(opdata);
-            }
+            num = num * 10 + c - '0';
         }
-        else if (c == '*' || c == '/' || c == '+' || c == '-') {
-            datas.push(opdata);
-            opdata = 0;
-            //2*  直接push
-            //2*3*  //先计算2*3
-            //1+2*3//直接push
-            if (ops.size() > 0 &&(
-                ( ops.top() == '*' || ops.top() == '/')||
-                  (c == '+' || c=='-')
-                )) {
-                //操作栈非空，何时需要先计算栈内操作符
-                //(1)当前操作符为+-时 。1+2+    或1*2+ 或 2/1*3
-                //或(2)栈顶操作符为*/时， 1*2+ 或1*2*
-                int b = datas.top();
-                datas.pop();
-                int a = datas.top();
-                datas.pop();
-                char opc = ops.top();
-                ops.pop();
-                int r = calAB(a, b, opc);
-                datas.push(r);
+        if (!(c >= '0' && c <= '9') && c != ' ' || i == n - 1) {
+            switch (preSign) {
+            case '+':
+                stk.push_back(num);
+                break;
+            case '-':
+                stk.push_back(-num);
+                break;
+            case '*':
+                stk.back() *= num;
+                break;
+            default:
+                stk.back() /= num;
             }
-            ops.push(c);
+            preSign = c;
+            num = 0;
         }
     }
-    //1+2*3
-    while (ops.size() > 0) {
-        int b = datas.top();
-        datas.pop();
-        int a = datas.top();
-        datas.pop();
-        char opc = ops.top();
-        ops.pop();
-        int r = calAB(a, b, opc);
-        datas.push(r);
+    int sum = 0;
+    for (int v : stk) {
+        sum += v;
     }
-    return datas.top();
+    return sum;
 }
 int main()
 {
@@ -79,7 +44,7 @@ int main()
     //std::string str = "1+2*3";
     //string str = "11+10/5";
     string str = "11*10-20";
-    int r = caldata(str);
+    int r = calculate(str);
     cout << "str:" << str << "=" << r << endl;
     cout << endl;
 }
