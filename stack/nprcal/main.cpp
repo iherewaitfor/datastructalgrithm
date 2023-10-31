@@ -1,73 +1,84 @@
 #include <iostream>
 #include <stack>
 #include <string>
-#include <list>
+#include <vector>
+#include<ctype.h>
+#include<unordered_map>
 using namespace std;
+
 class Solution {
 public:
-    void printstr(list<string> words) {
-        for (auto& w : words) {
-            cout << w << " ";
-        }
-        cout << endl;
-    }
     int calculate(string s) {
-        list<string> words;
-        getwords(s, words); //过滤空字符
-        //printstr(words);
-        handlsub(words);    //转换负号为0-
-        //printstr(words);
-        list<string> rpn = getrpn(words); //取得后缀表达式
-        //printstr(rpn);
-        int r = calrpn(rpn); //计算后缀表达式
-        return r;
-    }
-    void handlsub(list<string>& words) {
-        if (words.front() == "-") {
-            words.push_front("0");
-        }
-        //1-(-2)转换为1-(0-2)
-        //-1-(-2)转换为0-1-(0-2)
-        auto it = words.begin();
-        it++;
-        for (; it != words.end(); ++it) {
-            if (*(it) == "-") {
-                --it;
-                if (*(it) == "(") {
-                    ++it;
-                    words.insert(it, "0");
+        trim(s);
+        vector<string> rpn;
+        stack<string> stk;//鎿嶄綔绗︽爤
+        for (int i = 0; i < s.size(); i++) {
+            if (s[i] == '(') {
+                rpn.emplace_back("(");
+            }
+            else if (s[i] == ')') {
+                while (!stk.empty() && stk.top() != "(") {
+                    rpn.emplace_back(stk.top());
+                    stk.pop();
                 }
-                ++it;
+                stk.pop();//"("鍑烘爤
+            }
+            else if (isdigit(s[i])) {
+                string num;
+                while (i < s.size() && isdigit(s[i])) {
+                    num.append(1, s[i++]);
+                }
+                i--;
+                rpn.emplace_back(num);
+            }
+            else {
+                if (s[i] == '-' && (i == 0 || s[i - 1] == '(')) {
+                    rpn.emplace_back("0");
+                }
+                string op = s.substr(i, 1);
+                while (!stk.empty() && stk.top() != "(" && needpop(op, stk.top())) {
+                    rpn.emplace_back(stk.top());
+                    stk.pop();
+                }
+                stk.push(op);
             }
         }
+        while (!stk.empty()) {
+            rpn.emplace_back(stk.top());
+            stk.pop();
+        }
+         for(auto&v:rpn){
+             cout << v << " ";
+         }
+         cout <<endl;
+        return calrpn(rpn);
     }
-    int calab(int a, int b, const string& opc) {
-        int r = 0;
-        if (opc == "+") {
-            r = a + b;
-        }
-        else if (opc == "-") {
-            r = a - b;
-        }
-        else if (opc == "*") {
-            r = a * b;
-        }
-        else if (opc == "/") {
-            r = a / b;
-        }
-        cout << "calab:" << a << opc << b << "=" << r << endl;
-        return r;
+private:
+    bool isoperator(const string& op) {
+        return op == "+" || op == "-" || op == "*" || op == "/";
     }
-    int calrpn(const list<string>& rpn) {
+    int calab(int a, int b, string op) {
+        switch (op[0]) {
+        case '+':
+            return a + b;
+        case '-':
+            return a - b;
+        case '*':
+            return a * b;
+        case '/':
+            return a / b;
+        }
+        return 0;
+    }
+    int calrpn(vector<string>& rpn) {
         stack<int> s;
         for (auto& v : rpn) {
-            if (v == "+" || v == "-" || v == "*" || v == "/") {
+            if (isoperator(v)) {
                 int b = s.top();
                 s.pop();
                 int a = s.top();
                 s.pop();
-                int r = calab(a, b, v);
-                s.push(r);
+                s.push(calab(a, b, v));
             }
             else {
                 s.push(stoi(v));
@@ -75,75 +86,23 @@ public:
         }
         return s.top();
     }
-    list<string> getrpn(const list<string>& words) {
-        list<string> rpn;
-        stack<string> s; //符号栈
-        for (auto& v : words) {
-            //优先级排序，其中右括号直接出栈不参与比较
-            //*/
-            //+-
-            //(
-            if (v == "+" || v == "-") {
-                //优先级较低,先计算栈内所有运算符。除非遇到(
-                while (!s.empty() && (s.top() != "(")) {
-                    rpn.emplace_back(s.top());
-                    s.pop();
-                }
-                s.push(v);
-            }
-            else if (v == "*" || v == "/") {
-                //优先级较高
-                //只有*或/优先级不比*/高。
-                while (!s.empty() && (s.top() == "*" || s.top() == "/")) {
-                    rpn.emplace_back(s.top());
-                    s.pop();
-                }
-                s.push(v);
-            }
-            else if (v == ")") {
-                //直到取到(
-                while (s.top() != "(") {
-                    rpn.emplace_back(s.top());
-                    s.pop();
-                }
-                s.pop();
-            }
-            else if (v == "(") {
-                s.push(v);
-            }
-            else {//数值不入栈
-                rpn.emplace_back(v);
+    void trim(string& s) {
+        int j = 0;
+        for (int i = 0; i < s.size(); i++) {
+            if (s[i] != ' ') {
+                s[j++] = s[i];
             }
         }
-        while (!s.empty()) {
-            rpn.emplace_back(s.top());
-            s.pop();
-        }
-        return rpn;
+        s.resize(j);
     }
-    void getwords(const string& s, list<string>& words) {
-        string str;
-        string word;
-        const int n = s.size();
-        for (int i = 0; i < n;) {
-            if (s[i] == ' ') {
-                i++;
-            }
-            else if (s[i] >= '0' && s[i] <= '9') {
-                while (i < n && s[i] >= '0' && s[i] <= '9') {
-                    word.append(1, s[i]);
-                    i++;
-                }
-                words.emplace_back(word);
-                word = "";
-            }
-            else {
-                word.append(1, s[i]);
-                words.emplace_back(word);
-                word = "";
-                i++;
-            }
-        }
+    bool needpop(const string& op, const string& stktopop) {
+        static unordered_map<string, int> opmap = {
+            {"+", 1},
+            {"-", 1},
+            {"*", 2},
+            {"/", 2}
+        };
+        return opmap[stktopop] >= opmap[op];
     }
 };
 int main()
@@ -155,7 +114,11 @@ int main()
     //slo.calculate("11+10*2");
     //slo.calculate("11+(20+10)*2");
     //slo.calculate("20*(10/2)");
-    slo.calculate("1-(     -2)"); //1-(0-2)
-    slo.calculate("-1-(     -2)"); //1-(0-2)
+    //string str = "1-(-2)";
+    string str = "1+1";
+    int r = slo.calculate(str); //1-(0-2)
+    cout << str << "=" << r << endl;
+
+    //slo.calculate("-1-(-2)"); //1-(0-2)
     
 }
