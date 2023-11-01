@@ -269,3 +269,129 @@ int main()
         return sum;
     }
 ```
+# 224. 基本计算器
+
+解法一：使用后缀表达式。
+关键数据结构
+- 后缀表达式数组vector<string> rpn;
+- 操作符栈stack<string> stk;
+
+关键步骤
+- 滤空
+- 处理字符循环
+  - 若为(
+    - 直接入栈
+  - 若为)
+    - 把所有的操作符出栈，放到rpn，直到碰到(或者是空。
+    - 然后把（出栈
+  - 若为数值
+    - 取出数值
+    - 直接把数值放入到rpn
+  - 最后为操作符
+    - 先处理为-的情况
+      - 需要补"0"到rpn
+        - i==s.size() 或s[i-1]为(
+    - 根据优先级，处理需要出栈的操作符
+      - 不是左括号的栈顶操作符，不比当前操作符小的操作符，都需要出栈，放入到rpn
+      - 遇到左括号停止出栈
+- 把栈内所有操作符出栈放到prn
+
+```C++
+#include<ctype.h>
+class Solution {
+public:
+    int calculate(string s) {
+        trim(s);
+        vector<string> rpn;
+        stack<string> stk;
+        for(int i = 0; i < s.size(); i++){
+            if(s[i] =='('){ 
+                stk.push("(");
+            } else if(s[i] == ')'){
+                while(!stk.empty() && stk.top() != "("){
+                    rpn.emplace_back(stk.top());
+                    stk.pop();
+                }
+                stk.pop();//"("出栈
+            } else if( isdigit(s[i])){
+                string num;
+                while(i < s.size() && isdigit(s[i])){
+                    num.append(1,s[i++]);
+                }
+                i--;
+                rpn.emplace_back(num);
+            } else {
+                if(s[i] == '-' && (i == 0 || s[i-1] == '(')){
+                    rpn.emplace_back("0");
+                }
+                string op = s.substr(i,1);
+                while(!stk.empty() && stk.top() != "(" && needpop(op, stk.top())){
+                    rpn.emplace_back(stk.top());
+                    stk.pop();
+                }
+                stk.push(op);
+            }
+        }
+        while(!stk.empty()){
+            rpn.emplace_back(stk.top());
+            stk.pop();
+        }
+        // for(auto v: rpn){
+        //     cout << v << " ";
+        // }
+        // cout << endl;
+        return calrpn(rpn);
+    }
+private:
+    bool isoperator(const string& s){
+        return s =="+" || s=="-" || s=="*" || s=="/";
+    }
+    int calrpn(const vector<string> &rpn){
+        stack<int> s;
+        for(auto&v: rpn){
+            if(isoperator(v)){
+                int b = s.top();
+                s.pop();
+                int a = s.top();
+                s.pop();
+                s.push(calab(a,b,v));
+            } else {
+                s.push(stoi(v));
+            }
+        }
+        return s.top();
+    }
+    int calab(int a, int b, const string& op){
+        switch(op[0]){
+            case '+':
+                return a+b;
+            case '-':
+                return a-b;
+            case '*':
+                return a*b;
+            case '/':
+                return a/b;
+        }
+        return 0;
+    }
+    void trim(string& s){
+        int j = 0;
+        for(int i =0; i < s.size(); i++){
+            if(s[i] != ' '){
+                s[j++] = s[i];
+            }
+        }
+        s.resize(j);
+    }
+    bool needpop(const string& op, const string& stktopop){
+        static unordered_map<string,int> opmap = {
+            {"+", 1},
+            {"-", 1},
+            {"*", 2},
+            {"/", 2}
+        };
+        return opmap[stktopop] >= opmap[op];
+    }
+};
+```
+
