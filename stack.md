@@ -229,6 +229,10 @@ int main()
 # 227. 基本计算器 II
 [227. 基本计算器 II](https://leetcode.cn/problems/basic-calculator-ii)
 
+- 用一个变量表示当前操作数的正负号。
+- 把所有的数压入栈（带符号）
+- 碰到乘除，先计算结果，再入栈
+- 最后计算栈内的所有数之和
 ```C++
     int calculate(string s) {
         vector<int> stk;
