@@ -399,3 +399,57 @@ private:
 };
 ```
 
+# 以词为单为翻转字符串
+
+以词为单位翻转字符串(词之间以空格隔开)，以英文逗号为单位完成整段话的翻转。例如：
+
+"how are you,I'm fine" -> "you are how,fine I'm"
+
+"ab cde, fg,h jk" -> "cde ab,fg ,jk h"
+
+```
+```C++
+#include <iostream>
+using namespace std;
+#include<stack>
+
+std::string ReverseSentence(std::string input) {
+    string ans; 
+    stack<string> s;
+    for (int i = 0; i < input.size(); i++) {
+        if (input[i] == ','){
+            while (!s.empty()) {
+                ans.append(s.top());
+                s.pop();
+            }
+            ans.append(1, input[i]);
+        }
+        else if (input[i] == ' ') {
+            s.push(" ");
+        }
+        else {
+            string word;
+            while (input[i] != ',' && i < input.size() && input[i] != ' ') {
+                word.append(1, input[i++]);
+            }
+            i--;
+            s.push(word);
+        }
+    }
+    while (!s.empty()) {
+        ans.append(s.top());
+        s.pop();
+    }
+    return ans;
+}
+
+int main()
+{
+    //string s = "how are you,I'm fine";
+    string s = "ab cde, fg,h jk";
+    cout << s << endl;
+    string ans = ReverseSentence(s);
+    cout << ans << endl;
+    return 0;
+}
+```
