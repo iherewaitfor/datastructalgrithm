@@ -407,7 +407,6 @@ private:
 
 "ab cde, fg,h jk" -> "cde ab,fg ,jk h"
 
-```
 ```C++
 #include <iostream>
 using namespace std;
