@@ -27,6 +27,22 @@ public:
         preOrder(root->left, res);
         preOrder(root->right, res);
     }
+    void inOrder(TreeNode* root, vector<int>& res) {
+        if (root == nullptr) {
+            return;
+        }
+        inOrder(root->left, res);
+        res.push_back(root->val);
+        inOrder(root->right, res);
+    }
+    void postOrder(TreeNode* root, vector<int>& res) {
+        if (root == nullptr) {
+            return;
+        }
+        postOrder(root->left, res);
+        postOrder(root->right, res);
+        res.push_back(root->val);
+    }
 };
 int main()
 {
