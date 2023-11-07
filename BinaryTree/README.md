@@ -184,40 +184,38 @@ struct TreeNode {
 ## 迭代 byStack
 
 通过unordered_set记录已经访问过的结点，判断出栈逻辑。
+- 模拟递归逻辑
+- 先处理左孩子
+  - 左孩子入栈（模拟递归调用访问左孩子）
+  - 使用continue，立即处理栈顶元素，（执行递归函数）
+- 处理右孩子
+- 处理根结点。
 
 ```C++
-    void postOrderByStackAndSet(TreeNode* root, vector<int>&res){
-        stack<TreeNode*> tStack;
+    vector<int> postorderTraversal(TreeNode* root) {
+        vector<int> ans;
         if(!root){
-           return; 
+            return ans;
         }
-        //后序：左右根
-        tStack.push(root);//根
-        unordered_set<TreeNode*> visitedNodes; //记录已访问过的结点
-        while(!tStack.empty()){
-            TreeNode* node = tStack.top();
-            if(node==NULL){
-                tStack.pop();
+        unordered_set<TreeNode*> visited;
+        stack<TreeNode*> s;
+        s.push(root);
+        while(!s.empty()){
+            TreeNode* node = s.top();
+            if(node->left && visited.count(node->left) < 1){
+                visited.insert(node->left);
+                s.push(node->left);
                 continue;
             }
-            //根结点在左右都被访问过,才能出栈
-            //左孩子已处理
-            if(node->left == NULL || visitedNodes.count(node->left)){
-                //右孩子已处理
-                if(node->right == NULL || visitedNodes.count(node->right)){
-                    tStack.pop();
-                    res.push_back(node->val);
-                    visitedNodes.insert(node);
-                    continue;
-                } else {
-                    //处理右孩子。
-                    tStack.push(node->right);
-                }
-            } else {
-                //处理左孩子。
-                tStack.push(node->left);
+            if(node->right && visited.count(node->right) < 1){
+                visited.insert(node->right);
+                s.push(node->right);
+                continue;
             }
+            ans.push_back(node->val);
+            s.pop();
         }
+        return ans;
     }
 ```
 
