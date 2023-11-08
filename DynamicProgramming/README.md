@@ -1,5 +1,6 @@
 - [DynamicProgramming 动态规划](#dynamicprogramming-动态规划)
 - [钢条切割 CutRod](#钢条切割-cutrod)
+- [300. 最长递增子序列](#300-最长递增子序列)
 - [最大连续子数组之和](#最大连续子数组之和)
 - [最大连续子数组](#最大连续子数组)
 - [买卖股票的最佳时期3](#买卖股票的最佳时期3)
@@ -85,6 +86,30 @@
 - 把原问题划分成独立的子问题。
 - 使用额外空间存储子问题的解，避免重复求解子问题。
 - 使用子问题解组合成原问题解。
+# 300. 最长递增子序列
+[300. 最长递增子序列](https://leetcode.cn/problems/longest-increasing-subsequence)
+解法一
+- 比队尾大的元素，直接加入队尾
+- 只有小的元素，才能压在大的元素上。
+```C++
+    int lengthOfLIS(vector<int>& nums) {
+        int n = nums.size();
+        if(n < 2){
+            return n;
+        }
+        vector<int> tails;
+        tails.push_back(nums[0]);
+        for(int i = 1;i < n;i++){
+            if(nums[i] > tails.back()){
+                tails.push_back(nums[i]);
+            } else {
+                auto it = lower_bound(tails.begin(), tails.end(), nums[i]);
+                *it = nums[i];
+            }
+        }
+        return tails.size();
+    }
+```
 
 # 最大连续子数组之和
 
