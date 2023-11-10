@@ -112,6 +112,7 @@
 ```
 
 解法二
+- dp[i]表示以下标i元素为结尾的最长递增子序列的长度
 ```C++
     int lengthOfLIS(vector<int>& nums) {
         int n = nums.size();
