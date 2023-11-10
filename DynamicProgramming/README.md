@@ -111,6 +111,28 @@
     }
 ```
 
+解法二
+```C++
+    int lengthOfLIS(vector<int>& nums) {
+        int n = nums.size();
+        if(n < 2){
+            return n;
+        }
+        int maxlen = 1;
+        vector<int> dp(n);
+        for(int i = 0; i < n; i++){
+            dp[i] = 1;
+            for(int j = 0; j <=i; j++){
+                if(nums[i] > nums[j]){
+                    dp[i] = max(dp[i], dp[j] + 1);
+                }
+            }
+            maxlen = max(dp[i], maxlen);
+        }
+        return maxlen;
+    }
+```
+
 # 最大连续子数组之和
 
 - 把原问题划分成独立的子问题
